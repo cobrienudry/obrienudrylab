@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Bureaucrat Career Review</title>
+<title>Bureaucrat &amp; MOS Review</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -163,12 +163,54 @@ kbd { font: 12px var(--mono); border: 1px solid var(--line); border-radius: 4px;
   .verdict { margin-left: 0; }
 }
 @media (pointer: coarse) { .acts button kbd, .keyhelp { display: none; } }
+
+/* MOS digitization tasks: page image beside the questions */
+body.wide .wrap, body.wide .savebar .in { max-width: 1440px; }
+.taskgroup { grid-column: 1 / -1; margin: 10px 0 -2px; font: 600 12px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.split { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.pv { position: sticky; top: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: grid; min-width: 0; }
+.pvbar { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line); font: 12.5px var(--mono); color: var(--muted); }
+.pvbar .sp { flex: 1; }
+.pvscroll { overflow: auto; max-height: calc(100vh - 150px); background: #fff; }
+.pvinner { position: relative; width: 100%; }
+.pvinner img { display: block; width: 100%; height: auto; }
+.box { position: absolute; border: 2px solid #d9480f; background: rgba(255, 196, 0, .16); border-radius: 2px; pointer-events: none; }
+.box.dim { border-color: rgba(29, 79, 145, .55); background: rgba(29, 79, 145, .06); }
+.box.on { border-color: #d9480f; background: rgba(255, 196, 0, .22); border-width: 3px; }
+.box b { position: absolute; left: -2px; top: -16px; font: 600 11px var(--mono); background: #1d4f91; color: #fff; padding: 0 4px; border-radius: 3px; }
+.box.on b { background: #d9480f; }
+.side { display: grid; gap: 12px; min-width: 0; }
+.krow { background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--v, var(--line)); border-radius: 10px; padding: 10px 14px; display: grid; gap: 6px; min-width: 0; cursor: default; }
+.krow.on { box-shadow: 0 0 0 2px var(--accent); }
+.krow.done { --v: var(--ok); } .krow.bad { --v: var(--drop); } .krow.fixd { --v: var(--fix); }
+.krow .lab { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.krow .lab b { font-size: 14px; }
+.krow .lab .hint { font-size: 12.5px; color: var(--muted); }
+.val { font-size: 14.5px; overflow-wrap: anywhere; white-space: pre-wrap; }
+.val.empty { color: var(--muted); font-style: italic; }
+.val.long { max-height: 9.5em; overflow: auto; }
+.chips kbd { font: 400 10.5px var(--mono); opacity: .7; margin-left: 5px; border: 0; background: none; padding: 0; }
+.krow textarea { min-height: 2.4em; resize: vertical; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pair .panel { display: grid; gap: 6px; align-content: start; }
+.pair dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 12px; margin: 0; font-size: 14px; }
+.pair dt { font: 600 11px var(--sans); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding-top: 2px; }
+.pair dd { margin: 0; overflow-wrap: anywhere; }
+.pair dd.same { color: var(--ok); }
+.misslist { display: grid; gap: 8px; }
+.missrow { display: grid; grid-template-columns: 1fr 2fr 0.7fr auto; gap: 8px; align-items: center; }
+@media (max-width: 900px) {
+  .split, .pair { grid-template-columns: 1fr; }
+  .pv { position: static; }
+  .pvscroll { max-height: 70vh; }
+  .missrow { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Bureaucrat career review <span>· O'Brien-Udry Lab</span></h1>
+    <h1>Bureaucrat &amp; MOS review <span>· O'Brien-Udry Lab</span></h1>
     <div class="stats" id="stats" hidden>
       <span class="task-pill" id="s-task"></span>
       <span>you <b id="s-me">0</b></span>
@@ -214,11 +256,14 @@ kbd { font: 12px var(--mono); border: 1px solid var(--line); border-radius: 4px;
 
   <section id="work" class="wrap" hidden>
     <div class="panel case" id="casehead"></div>
+    <div id="moswork" hidden></div>
+    <div id="careerwork" class="wrap">
     <div id="context"></div>
     <div class="poshead"><h3>Positions</h3><span class="where keyhelp"><kbd>J</kbd>/<kbd>K</kbd> move · <kbd>A</kbd> correct · <kbd>E</kbd> fix · <kbd>D</kbd> drop · <kbd>N</kbd> add · <kbd>⌘/Ctrl</kbd>+<kbd>Enter</kbd> save</span></div>
     <div class="poslist" id="poslist"></div>
     <div class="formrow"><button class="btn" id="addpos" type="button">+ Add a missing position</button></div>
     <div class="panel judge" id="judge"></div>
+    </div>
     <div class="where" id="where"></div>
   </section>
 
@@ -246,6 +291,7 @@ kbd { font: 12px var(--mono); border: 1px solid var(--line); border-radius: 4px;
 <script src="assets/config.js"></script>
 <script src="assets/codebook.js"></script>
 <script src="assets/countries.js"></script>
+<script src="assets/mos.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -255,7 +301,8 @@ const F = ["employer", "title", "sector", "role_level", "country_iso3", "start_y
 const SECT = Object.fromEntries(SECTORS.map(s => [s[0], s]));
 const LVL = Object.fromEntries(ROLE_LEVELS.map(s => [s[0], s]));
 const TASK_BY = Object.fromEntries(TASKS.map(t => [t.id, t]));
-const PREFIX = { P: "linkedin", M: "mos_random", T: "mos_top" };
+const PREFIX = Object.fromEntries(TASKS.map(t => [t.prefix, t.id]));
+const KIND = () => TASK_BY[TASK].kind;
 const store = {
   get(k) { try { return JSON.parse(localStorage.getItem("brv:" + k)); } catch { return null; } },
   set(k, v) { try { localStorage.setItem("brv:" + k, JSON.stringify(v)); return true; } catch { return false; } },
@@ -352,9 +399,11 @@ $("change-task").onclick = () => { if (cur && dirty() && !confirm("Leave this ca
 
 function pickTask() {
   cur = null;
+  let grp = "";
   $("tasks").innerHTML = TASKS.map(t => {
-    const total = (DATA[t.id]?.cases.length) ?? ({ linkedin: 200, mos_random: 350, mos_top: 500 }[t.id]);
-    return `<button class="taskcard" type="button" data-t="${t.id}" style="--c:var(${t.color})"><b>${esc(t.title)}</b><span>${esc(t.desc)}</span>
+    const total = DATA[t.id]?.cases.length ?? t.n;
+    const head = t.group !== grp ? `<div class="taskgroup">${esc(grp = t.group)}</div>` : "";
+    return head + `<button class="taskcard" type="button" data-t="${t.id}" style="--c:var(${t.color})"><b>${esc(t.title)}</b><span>${esc(t.desc)}</span>
       <span class="prog">you ${myCount(t.id)} · team ${teamDone(t.id)}/${total}</span></button>`;
   }).join("");
   $("tasks").querySelectorAll("button").forEach(b => b.onclick = () => startTask(b.dataset.t));
@@ -396,20 +445,20 @@ function openCase(id, push) {
     item, task: TASK, c, t0: Date.now(), secs: saved?.secs || 0, active: 0,
     pos: structuredClone(saved?.pos || {}), added: structuredClone(saved?.added || []),
     identity: saved?.identity || "", complete: saved?.complete || "", note: saved?.note || "",
-    saved: !!saved, snap: "",
+    saved: !!saved, snap: "", st: structuredClone(saved?.st || {}), ai: 0,
   };
-  cur.snap = snapshot();
   if (push) { hist = hist.slice(0, hpos + 1); hist.push(item); hpos = hist.length - 1; }
   if (BK && !saved) api({ action: "claim", item, coder: CODER }).catch(() => {});
   render();
+  cur.snap = snapshot();
   show("work");
   scrollTo({ top: 0 });
 }
-const snapshot = () => JSON.stringify([cur.pos, cur.added, cur.identity, cur.complete, $("note").value]);
+const snapshot = () => JSON.stringify([cur.pos, cur.added, cur.identity, cur.complete, cur.st, $("note").value]);
 const dirty = () => cur && snapshot() !== cur.snap;
 
 // ---------- rendering ----------
-const isMos = () => TASK !== "linkedin";
+const isMos = () => TASK === "mos_random" || TASK === "mos_top";
 const cname = iso => (window.COUNTRIES || {})[iso] || DATA[TASK]?.countries?.[iso] || iso || "";
 const fmtD = (y, m) => y ? (m ? `${y}-${String(m).padStart(2, "0")}` : y) : "";
 function range(p) { const a = fmtD(p.start_year, p.start_month), b = fmtD(p.end_year, p.end_month) || (p.is_current === "1" ? "Present" : ""); return a || b ? `${a || "?"} – ${b || "?"}` : "undated"; }
@@ -422,6 +471,10 @@ const projLink = p => p ? `<a href="https://projects.worldbank.org/en/projects-o
 const idLabel = v => (IDENTITY[isMos() ? "mos" : "linkedin"].find(x => x[0] === v) || [v, v])[1];
 
 function render() {
+  const careers = KIND() === "careers";
+  document.body.classList.toggle("wide", !careers);
+  $("careerwork").hidden = !careers; $("moswork").hidden = careers;
+  if (!careers) { $("note").value = cur.note; return MOSK[KIND()].render(); }
   const c = cur.c, t = TASK_BY[TASK];
   $("casehead").style.setProperty("--c", `var(${t.color})`);
   $("note").value = cur.note;
@@ -649,23 +702,25 @@ function rowsFor(b, c, task, coder) {
   return [{ name: "positions", cols: POS_COLS, rows: pos }, { name: "persons", cols: PER_COLS, rows: per }];
 }
 async function save() {
-  const probs = problems();
+  const K = KIND() === "careers" ? null : MOSK[KIND()];
+  const probs = K ? K.problems() : problems();
   const pl = $("problems");
   if (probs.length) {
     pl.innerHTML = probs.slice(0, 12).map(p => `<li>${esc(p)}</li>`).join("") + (probs.length > 12 ? `<li>…and ${probs.length - 12} more</li>` : "");
     pl.hidden = false; setStatus(`${probs.length} thing${probs.length > 1 ? "s" : ""} to finish`, true);
     pl.scrollIntoView({ block: "center", behavior: "smooth" });
-    const first = cur.c.pos.findIndex(p => !cur.pos[p.id]?.v); if (first >= 0) setActive(first);
+    if (!K) { const first = cur.c.pos.findIndex(p => !cur.pos[p.id]?.v); if (first >= 0) setActive(first); }
     return;
   }
   cur.note = $("note").value.trim();
   const body = { item: cur.item, task: TASK, case_id: cur.c.id, cbv: CB_VERSION, dv: DATA[TASK].version, at: Date.now(),
-    pos: cur.pos, added: cur.added, identity: cur.identity, complete: cur.complete, note: cur.note, secs: cur.secs + (Date.now() - cur.t0) / 1000 };
+    note: cur.note, secs: cur.secs + (Date.now() - cur.t0) / 1000,
+    ...(K ? { st: cur.st } : { pos: cur.pos, added: cur.added, identity: cur.identity, complete: cur.complete }) };
   if (JSON.stringify(body).length > 44000) { setStatus("This case is too large to save; shorten your notes.", true); return; }
   mine[cur.item] = body; saveLocal();
   $("save").disabled = true; setStatus("Saving…");
   if (BK) {
-    try { await api({ action: "save", coder: CODER, item: cur.item, body, tables: rowsFor(body, cur.c, TASK, CODER) }); }
+    try { await api({ action: "save", coder: CODER, item: cur.item, body, tables: tablesFor(body, cur.c, TASK, CODER) }); }
     catch (e) { $("save").disabled = false; setStatus("Saved in this browser, but not to the sheet: " + e.message + ". Try again.", true); return; }
   }
   $("save").disabled = false;
@@ -682,7 +737,7 @@ $("done-task").onclick = pickTask;
 $("goto").onkeydown = async e => {
   if (e.key !== "Enter") return;
   const id = $("goto").value.trim().toUpperCase(), t = PREFIX[id[0]];
-  if (!t) { setStatus("IDs look like P012, M105 or T330.", true); return; }
+  if (!t) { setStatus("IDs start with " + TASKS.map(t => t.prefix).join(", ") + ", e.g. X012 or P105.", true); return; }
   if (dirty() && !confirm("Leave this case without saving?")) return;
   if (t !== TASK) { TASK = t; store.set("task:" + CODER, t); hist = []; hpos = -1; await loadTask(t); $("s-task").textContent = TASK_BY[t].title; $("s-task").style.setProperty("--c", `var(${TASK_BY[t].color})`); renderGuide(); updateStats(); }
   if (!BYID[t].has(id)) { setStatus(`No case ${id} in this task.`, true); return; }
@@ -695,6 +750,7 @@ addEventListener("keydown", e => {
   if ($("work").hidden || !cur) return;
   if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); save(); return; }
   if (e.target.closest?.("input,select,textarea") || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (KIND() !== "careers") return mosKey(e);
   const n = cur.c.pos.length, k = e.key.toLowerCase(), a = cur.active;
   const idx = typeof a === "number" ? a : n + +a.slice(1);
   const go = x => { x = Math.max(0, Math.min(n + cur.added.length - 1, x)); setActive(x < n ? x : "a" + (x - n), false, true); };
@@ -706,22 +762,23 @@ addEventListener("keydown", e => {
 
 // ---------- CSV download ----------
 $("dl").onclick = async () => {
-  const pos = [], per = [];
+  const out = {};
   for (const [item, b] of Object.entries(mine)) {
+    if (!TASK_BY[b.task]) continue;
     try { await loadTask(b.task); } catch { continue; }
     const c = BYID[b.task].get(b.case_id); if (!c) continue;
-    const [tp, tq] = rowsFor(b, c, b.task, CODER); pos.push(...tp.rows); per.push(...tq.rows);
+    for (const t of tablesFor(b, c, b.task, CODER)) { (out[t.name] ||= { cols: t.cols, rows: [] }).rows.push(...t.rows); }
   }
-  if (!per.length) { setStatus("You haven't saved any cases yet."); return; }
+  if (!Object.keys(out).length) { setStatus("You haven't saved any cases yet."); return; }
   const csv = (cols, rows) => [cols, ...rows].map(r => r.map(x => { x = String(x ?? ""); return /[",\n\r]/.test(x) ? `"${x.replace(/"/g, '""')}"` : x; }).join(",")).join("\r\n");
   const dl = (name, text) => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + text], { type: "text/csv" })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
-  dl(`review_positions_${CODER}.csv`, csv(POS_COLS, pos));
-  setTimeout(() => dl(`review_persons_${CODER}.csv`, csv(PER_COLS, per)), 400);
-  setStatus(`Downloaded ${per.length} cases, ${pos.length} positions.`);
+  Object.entries(out).forEach(([name, t], i) => setTimeout(() => dl(`review_${name}_${CODER}.csv`, csv(t.cols, t.rows)), i * 400));
+  setStatus(`Downloaded ${Object.keys(mine).length} cases as ${Object.keys(out).length} CSV files.`);
 };
 
 // ---------- guide ----------
 function renderGuide() {
+  if (KIND() !== "careers") { $("guide-body").innerHTML = MOSK[KIND()].guide(); return; }
   const mos = isMos();
   const dl = rows => `<dl>${rows.map(r => `<dt>${esc(r[0])}</dt><dd><b>${esc(r[1])}</b>${r[2] ? " · " + esc(r[2]) : ""}</dd>`).join("")}</dl>`;
   $("guide-body").innerHTML = `

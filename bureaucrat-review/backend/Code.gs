@@ -73,7 +73,7 @@ function save_(coder, item, body, tables) {
   for (var i = 1; i < v.length; i++) if (String(v[i][0]) === coder && String(v[i][1]) === item) { sh.getRange(i + 1, 3, 1, 2).setValues([[at, json]]); found = true; break; }
   if (!found) sh.appendRow([coder, item, at, json]);
   tables.forEach(function (t) {
-    if (['positions', 'persons'].indexOf(t.name) < 0 || !Array.isArray(t.rows) || !Array.isArray(t.cols)) throw new Error('Bad table');
+    if (['positions', 'persons', 'fields', 'entries', 'page_rows', 'pages', 'links'].indexOf(t.name) < 0 || !Array.isArray(t.rows) || !Array.isArray(t.cols)) throw new Error('Bad table');
     var tab = sheet_((t.name + ' ' + String(body.cbv || 'v')).slice(0, 90), t.cols);
     var a = tab.getDataRange().getValues();
     for (var r = a.length - 1; r >= 1; r--) if (String(a[r][0]) === coder && String(a[r][1]) === String(body.task) && String(a[r][2]) === String(body.case_id)) tab.deleteRow(r + 1);
