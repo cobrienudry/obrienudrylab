@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bureaucrat Career Review</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #eef1f4; --surface: #ffffff; --ink: #172230; --muted: #5a6776; --line: #d3dae2; --soft: #f5f7f9;
+  --accent: #1d4f91; --ok: #1f7a5a; --fix: #a5650f; --drop: #a3302a; --add: #6a4fa0;
+  --li: #2f5f8f; --mos: #3c6e71; --top: #8a5a12;
+  --s-linkedin: #2f5f8f; --s-web: #6a4fa0; --s-mos: #3c6e71; --s-wb: #8a5a12; --s-s200: #555f8a;
+  --hi: #fff3c4; --danger: #a3302a;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11161c; --surface: #1a2129; --ink: #e4e9ef; --muted: #93a0ae; --line: #2e3842; --soft: #151b22;
+  --accent: #6fa3e8; --ok: #4fc08f; --fix: #e0a54a; --drop: #ef7f74; --add: #b39ae6;
+  --li: #7fb2e5; --mos: #7cc0c3; --top: #d9a650;
+  --s-linkedin: #7fb2e5; --s-web: #b39ae6; --s-mos: #7cc0c3; --s-wb: #d9a650; --s-s200: #a7b0e0;
+  --hi: #4a4120; --danger: #ef7f74; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #11161c; --surface: #1a2129; --ink: #e4e9ef; --muted: #93a0ae; --line: #2e3842; --soft: #151b22;
+  --accent: #6fa3e8; --ok: #4fc08f; --fix: #e0a54a; --drop: #ef7f74; --add: #b39ae6;
+  --li: #7fb2e5; --mos: #7cc0c3; --top: #d9a650;
+  --s-linkedin: #7fb2e5; --s-web: #b39ae6; --s-mos: #7cc0c3; --s-wb: #d9a650; --s-s200: #a7b0e0;
+  --hi: #4a4120; --danger: #ef7f74; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); margin: 0; }
+body { color: var(--ink); font: 15px/1.5 var(--sans); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 130px; }
+a { color: var(--accent); }
+.wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 14px; min-width: 0; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding-block: 14px; border-bottom: 1px solid var(--line); }
+header h1 { margin: 0; font-size: 17px; font-weight: 700; }
+header h1 span { color: var(--muted); font-weight: 500; }
+.stats { margin-left: auto; display: flex; flex-wrap: wrap; gap: 6px 16px; font: 500 13px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; align-items: center; }
+.stats b { color: var(--ink); font-weight: 500; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; min-width: 0; }
+.msg { max-width: 68ch; }
+.msg h2 { margin: 0 0 8px; font-size: 20px; text-wrap: balance; }
+.msg p { margin: 0 0 10px; color: var(--muted); }
+.formrow { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+button.btn { font: 500 14px var(--sans); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 7px 12px; cursor: pointer; }
+button.btn:hover { border-color: var(--muted); }
+button.btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); font-weight: 600; }
+button.btn.small { font-size: 12.5px; padding: 4px 9px; }
+button:disabled { opacity: .45; cursor: default; }
+button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+input[type=text], input[type=number], input[type=url], select, textarea { font: 14px var(--sans); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 6px 9px; min-width: 0; width: 100%; }
+input[type=number] { font-family: var(--mono); }
+.status { font: 13px var(--mono); color: var(--muted); }
+.status.err { color: var(--danger); }
+.where { font: 12px var(--mono); color: var(--muted); }
+.task-pill { font: 600 12px var(--sans); color: var(--surface); background: var(--c, var(--accent)); border-radius: 999px; padding: 3px 10px; }
+.tasks { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 14px; }
+.taskcard { --c: var(--accent); text-align: left; display: grid; gap: 4px; font: 14px/1.45 var(--sans); color: var(--muted); background: var(--surface); border: 2px solid var(--line); border-left: 6px solid var(--c); border-radius: 9px; padding: 12px 14px; cursor: pointer; }
+.taskcard b { color: var(--ink); font-size: 15px; }
+.taskcard .prog { font: 12px var(--mono); }
+.taskcard:hover { border-color: var(--muted); border-left-color: var(--c); }
+
+/* case header */
+.case { border-left: 6px solid var(--c, var(--accent)); display: grid; gap: 10px; }
+.eyebrow { font: 600 11px var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.case h2 { margin: 0; font-size: 22px; line-height: 1.25; text-wrap: balance; }
+.case .sub { color: var(--muted); margin: 0; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 0; }
+.fact { display: grid; gap: 0; min-width: 0; max-width: 100%; }
+.fact dt { font: 600 11px var(--sans); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.fact dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+.warnline { color: var(--fix); font-weight: 600; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; }
+.links a { font-weight: 600; }
+.idnow { background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 2px; }
+.idnow .v { font-weight: 600; }
+.idnow .n { color: var(--muted); font-size: 14px; }
+details.sect { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; min-width: 0; }
+details.sect summary { cursor: pointer; font-weight: 600; }
+.tablewrap { overflow-x: auto; margin-top: 10px; }
+table.ment { border-collapse: collapse; font-size: 13.5px; width: 100%; min-width: 640px; }
+table.ment th { text-align: left; font: 600 11px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 4px 8px; border-bottom: 1px solid var(--line); }
+table.ment td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.ment td.d { font: 12.5px var(--mono); white-space: nowrap; color: var(--muted); }
+.edu { margin: 10px 0 0; padding-left: 18px; color: var(--muted); }
+.edu b { color: var(--ink); font-weight: 500; }
+
+/* position cards */
+.poshead { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+.poshead h3 { margin: 0; font-size: 16px; }
+.poslist { display: grid; gap: 10px; }
+.pos { --v: var(--line); background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--v); border-radius: 10px; padding: 12px 16px; display: grid; gap: 8px; min-width: 0; }
+.pos.on { box-shadow: 0 0 0 2px var(--accent); }
+.pos.v-ok { --v: var(--ok); } .pos.v-fix { --v: var(--fix); } .pos.v-drop { --v: var(--drop); } .pos.v-add { --v: var(--add); }
+.pos.v-drop .coded { opacity: .55; text-decoration: line-through; text-decoration-thickness: 1px; }
+.pos .top { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.num { font: 500 12px var(--mono); color: var(--muted); }
+.src { font: 600 11px var(--sans); letter-spacing: .04em; text-transform: uppercase; color: var(--c); border: 1px solid currentColor; border-radius: 4px; padding: 0 5px; }
+.dates { font: 500 13px var(--mono); }
+.badge { font: 12px var(--sans); color: var(--muted); background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; }
+.badge.strong { color: var(--ink); border-color: var(--accent); }
+.verdict { margin-left: auto; font: 600 12px var(--sans); color: var(--v); text-transform: uppercase; letter-spacing: .05em; }
+.emp { font-weight: 600; font-size: 16px; overflow-wrap: anywhere; }
+.ttl { overflow-wrap: anywhere; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.tag { font: 12.5px var(--sans); background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 1px 8px; }
+.tag b { font-family: var(--mono); font-weight: 500; }
+.raw { font-size: 13.5px; color: var(--muted); display: grid; gap: 2px; overflow-wrap: anywhere; }
+.raw .k { font: 600 11px var(--sans); letter-spacing: .05em; text-transform: uppercase; margin-right: 6px; }
+.raw mark { background: var(--hi); color: inherit; }
+.desc summary { cursor: pointer; font-size: 13.5px; color: var(--muted); }
+.desc p { white-space: pre-wrap; margin: 6px 0 0; font-size: 14px; max-height: 260px; overflow: auto; }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.acts button { font: 600 14px var(--sans); color: var(--ink); background: var(--surface); border: 2px solid var(--line); border-radius: 8px; padding: 5px 12px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+.acts button kbd { font: 400 11px var(--mono); color: var(--muted); }
+.acts button:hover { border-color: var(--muted); }
+.acts button[aria-pressed="true"] { border-color: var(--c); background: color-mix(in srgb, var(--c) 15%, var(--surface)); }
+.acts .ok { --c: var(--ok); } .acts .fix { --c: var(--fix); } .acts .drop { --c: var(--drop); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { --c: var(--accent); font: 500 13px var(--sans); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: var(--surface); }
+.chip .was { font-size: 11px; opacity: .8; margin-left: 4px; }
+.form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 12px; background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.form label { display: grid; gap: 2px; font: 600 11px var(--sans); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); min-width: 0; }
+.form label.wide { grid-column: span 2; }
+.form label.full { grid-column: 1 / -1; }
+.form label.chg { color: var(--fix); }
+.form label.chg input, .form label.chg select { border-color: var(--fix); }
+.form .was { font: 400 11.5px var(--sans); text-transform: none; letter-spacing: 0; color: var(--muted); overflow-wrap: anywhere; }
+.form label.bad input, .form label.bad select { border-color: var(--danger); }
+.note input { font-size: 13.5px; }
+.judge { display: grid; gap: 12px; }
+.judge h3 { margin: 0; font-size: 16px; }
+.judge .q { display: grid; gap: 6px; }
+.judge .q > span { color: var(--muted); font-size: 14px; }
+.judge .chip[title] { cursor: help; }
+.judge .chip { cursor: pointer; }
+.problems { color: var(--danger); font-size: 14px; margin: 0; padding-left: 18px; }
+
+.savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--surface); border-top: 1px solid var(--line);
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.savebar .in { max-width: 980px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+#note { flex: 1; min-width: 180px; width: auto; }
+#goto { width: 90px; font-family: var(--mono); }
+
+details.guide summary { cursor: pointer; font-weight: 600; }
+.guide .g { max-width: 86ch; color: var(--muted); }
+.guide h4 { color: var(--ink); margin: 16px 0 4px; font-size: 14px; }
+.guide dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 6px 0 0; }
+.guide dt { font: 500 13px var(--mono); color: var(--ink); }
+.guide dd { margin: 0; }
+.guide ul { margin: 4px 0; padding-left: 18px; }
+kbd { font: 12px var(--mono); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; background: var(--soft); }
+@media (max-width: 640px) {
+  .stats { margin-left: 0; }
+  .acts button kbd { display: none; }
+  .form label.wide { grid-column: 1 / -1; }
+  .guide dl { grid-template-columns: 1fr; }
+  .verdict { margin-left: 0; }
+}
+@media (pointer: coarse) { .acts button kbd, .keyhelp { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Bureaucrat career review <span>· O'Brien-Udry Lab</span></h1>
+    <div class="stats" id="stats" hidden>
+      <span class="task-pill" id="s-task"></span>
+      <span>you <b id="s-me">0</b></span>
+      <span id="s-teamwrap">team <b id="s-team">0</b>/<b id="s-total">0</b></span>
+      <span id="s-code"></span>
+      <span id="s-mode"></span>
+      <button class="btn small" id="change-task" type="button">Change task</button>
+      <button class="btn small" id="dl" type="button">Download my reviews</button>
+      <button class="btn small" id="switch" type="button">Switch coder</button>
+    </div>
+  </header>
+
+  <section class="panel msg" id="gate"><h2>Loading…</h2><p>Unlocking the data.</p></section>
+
+  <section class="panel msg" id="keypanel" hidden>
+    <h2>Project key needed</h2>
+    <p>The data on this site is encrypted. Open the link your supervisor sent you (it ends in <code>#k=…</code>), or paste the key here. It is remembered on this computer.</p>
+    <form id="key-form" class="formrow">
+      <input type="text" id="key-input" autocomplete="off" placeholder="project key" style="max-width:260px" required>
+      <button class="btn primary" type="submit">Unlock</button>
+    </form>
+    <p class="status err" id="key-err" hidden></p>
+  </section>
+
+  <section class="panel msg" id="onboard" hidden>
+    <h2>Before you start</h2>
+    <p>Enter the coder code your supervisor gave you (your initials are fine). It goes on every review you save, so use the same one every session.</p>
+    <p>Then read the review guide at the bottom of the page. You can reopen it at any time.</p>
+    <form id="code-form" class="formrow">
+      <input type="text" id="code-input" maxlength="12" autocomplete="off" placeholder="e.g. jlee" style="max-width:200px" required>
+      <button class="btn primary" type="submit">Continue</button>
+    </form>
+    <p class="status err" id="code-err" hidden></p>
+  </section>
+
+  <section class="panel" id="taskpick" hidden>
+    <div class="msg">
+      <h2>Choose a task</h2>
+      <p>Use the task your supervisor assigned. You can switch at any time; each task keeps its own progress.</p>
+    </div>
+    <div class="tasks" id="tasks"></div>
+  </section>
+
+  <section id="work" class="wrap" hidden>
+    <div class="panel case" id="casehead"></div>
+    <div id="context"></div>
+    <div class="poshead"><h3>Positions</h3><span class="where keyhelp"><kbd>J</kbd>/<kbd>K</kbd> move · <kbd>A</kbd> correct · <kbd>E</kbd> fix · <kbd>D</kbd> drop · <kbd>N</kbd> add · <kbd>⌘/Ctrl</kbd>+<kbd>Enter</kbd> save</span></div>
+    <div class="poslist" id="poslist"></div>
+    <div class="formrow"><button class="btn" id="addpos" type="button">+ Add a missing position</button></div>
+    <div class="panel judge" id="judge"></div>
+    <div class="where" id="where"></div>
+  </section>
+
+  <section class="panel msg" id="done" hidden>
+    <h2>Nothing left in this task right now</h2>
+    <p>Every case in this task is either done or being reviewed by someone else. If a teammate stops partway, their cases come back after a while, so check again later, or choose another task.</p>
+    <div class="formrow"><button class="btn" id="done-back" type="button">← My last case</button><button class="btn" id="done-task" type="button">Choose another task</button></div>
+  </section>
+
+  <details class="panel guide" id="guide">
+    <summary>Review guide</summary>
+    <div class="g" id="guide-body"></div>
+  </details>
+</div>
+
+<div class="savebar" id="savebar" hidden><div class="in">
+  <button class="btn" id="prev" type="button">← Back</button>
+  <button class="btn" id="fwd" type="button">Forward →</button>
+  <input type="text" id="goto" placeholder="Go to ID" aria-label="Go to case ID" autocomplete="off">
+  <input type="text" id="note" maxlength="500" placeholder="Note on this case (optional)">
+  <span class="status" id="status"></span>
+  <button class="btn primary" id="save" type="button">Save &amp; next case</button>
+</div></div>
+
+<script src="assets/config.js"></script>
+<script src="assets/codebook.js"></script>
+<script src="assets/countries.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const BK = (CONFIG.BACKEND_URL || "").trim();
+const STALE_MS = (CONFIG.STALE_MINUTES || 30) * 60 * 1000;
+const F = ["employer", "title", "sector", "role_level", "country_iso3", "start_year", "start_month", "end_year", "end_month"];
+const SECT = Object.fromEntries(SECTORS.map(s => [s[0], s]));
+const LVL = Object.fromEntries(ROLE_LEVELS.map(s => [s[0], s]));
+const TASK_BY = Object.fromEntries(TASKS.map(t => [t.id, t]));
+const PREFIX = { P: "linkedin", M: "mos_random", T: "mos_top" };
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem("brv:" + k)); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem("brv:" + k, JSON.stringify(v)); return true; } catch { return false; } },
+  del(k) { try { localStorage.removeItem("brv:" + k); } catch {} },
+};
+function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+const show = (...ids) => { for (const id of ["gate", "keypanel", "onboard", "taskpick", "work", "done"]) $(id).hidden = !ids.includes(id); $("savebar").hidden = !ids.includes("work"); };
+
+let KEY = null, CODER = null, TASK = null;
+const DATA = {}, BYID = {}, loads = {};
+let claims = [];            // [{item, coder, at, done}] from the backend
+let mine = {};              // item -> saved body (this coder, all tasks)
+let cur = null;             // the case being reviewed
+let hist = [], hpos = -1;   // cases opened in this session (items)
+
+// ---------- data: decrypt data/<task>.bin ----------
+async function decrypt(buf, key) {
+  const b = new Uint8Array(buf);
+  if (String.fromCharCode(...b.slice(0, 4)) !== "BRV1") throw new Error("Not a data file");
+  const salt = b.slice(4, 20), iv = b.slice(20, 32), ct = b.slice(32);
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(key), "PBKDF2", false, ["deriveKey"]);
+  const k = await crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 200000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  let gz;
+  try { gz = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, k, ct); } catch { const e = new Error("Wrong project key"); e.badKey = true; throw e; }
+  const txt = await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+  return JSON.parse(txt);
+}
+function loadTask(id) {
+  return loads[id] ||= (async () => {
+    const r = await fetch("data/" + TASK_BY[id].file, { cache: "no-cache" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const d = await decrypt(await r.arrayBuffer(), KEY);
+    DATA[id] = d; BYID[id] = new Map(d.cases.map(c => [c.id, c]));
+    return d;
+  })().catch(e => { delete loads[id]; throw e; });
+}
+
+// ---------- backend ----------
+async function api(payload) {
+  const r = await fetch(BK, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ ...payload, k: KEY }) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || "Backend error");
+  return j;
+}
+async function refreshClaims() { if (!BK) return; try { claims = (await api({ action: "state" })).claims; } catch (e) { setStatus("Couldn't reach the sheet: " + e.message, true); } }
+const itemOf = (task, id) => `${task}-${id}`;
+function others(item) { const now = Date.now(); return claims.filter(c => c.item === item && c.coder !== CODER && (c.done || now - c.at < STALE_MS)).length; }
+function needs(task, id) { return (hash("dbl:" + id) % 100) < (TASK_BY[task].double_pct || 0) ? 2 : 1; }
+function teamDone(task) { const s = new Set(claims.filter(c => c.done && c.item.startsWith(task + "-")).map(c => c.item)); for (const it in mine) if (it.startsWith(task + "-")) s.add(it); return s.size; }
+function myCount(task) { return Object.keys(mine).filter(it => it.startsWith(task + "-")).length; }
+
+function saveLocal() { store.set("saves:" + CODER, mine); }
+async function loadMine() {
+  mine = store.get("saves:" + CODER) || {};
+  if (!BK) return;
+  try { for (const b of (await api({ action: "mine", coder: CODER })).codes) if (!mine[b.item] || (mine[b.item].at || 0) <= (b.at || 0)) mine[b.item] = b; saveLocal(); }
+  catch (e) { setStatus("Couldn't load your saved reviews from the sheet: " + e.message, true); }
+}
+
+// ---------- startup ----------
+async function boot() {
+  const m = location.hash.match(/[#&]k=([^&]+)/);
+  if (m) { store.set("key", decodeURIComponent(m[1])); history.replaceState(null, "", location.pathname + location.search); }
+  KEY = store.get("key");
+  if (!KEY) return show("keypanel");
+  try { await loadTask("mos_random"); }
+  catch (e) {
+    if (e.badKey) { store.del("key"); $("key-err").textContent = "That key didn't unlock the data. Check the link or ask your supervisor."; $("key-err").hidden = false; return show("keypanel"); }
+    $("gate").innerHTML = `<h2>Couldn't load the data</h2><p>${esc(e.message)}. Reload the page; if it keeps happening, tell your supervisor.</p>`; return show("gate");
+  }
+  CODER = store.get("coder");
+  if (!CODER) return show("onboard");
+  await afterCoder();
+}
+async function afterCoder() {
+  $("s-code").innerHTML = `coder <b>${esc(CODER)}</b>`;
+  $("s-mode").textContent = BK ? "saving to sheet" : "saving in this browser";
+  $("s-mode").style.color = BK ? "var(--ok)" : "var(--fix)";
+  show("gate"); $("gate").innerHTML = "<h2>Loading…</h2><p>Loading your saved reviews.</p>";
+  await Promise.all([loadMine(), refreshClaims()]);
+  $("stats").hidden = false;
+  TASK = store.get("task:" + CODER);
+  if (TASK && TASK_BY[TASK]) startTask(TASK); else pickTask();
+}
+$("key-form").onsubmit = e => { e.preventDefault(); store.set("key", $("key-input").value.trim()); $("key-err").hidden = true; show("gate"); boot(); };
+$("code-form").onsubmit = e => {
+  e.preventDefault();
+  const v = $("code-input").value.trim().toLowerCase();
+  if (!/^[a-z0-9_-]{2,12}$/.test(v)) { $("code-err").textContent = "Use 2–12 letters, digits, - or _."; $("code-err").hidden = false; return; }
+  CODER = v; store.set("coder", v); afterCoder();
+};
+$("switch").onclick = () => { if (cur && dirty() && !confirm("Leave this case without saving?")) return; store.del("coder"); CODER = null; cur = null; hist = []; hpos = -1; $("stats").hidden = true; $("code-input").value = ""; show("onboard"); };
+$("change-task").onclick = () => { if (cur && dirty() && !confirm("Leave this case without saving?")) return; pickTask(); };
+
+function pickTask() {
+  cur = null;
+  $("tasks").innerHTML = TASKS.map(t => {
+    const total = (DATA[t.id]?.cases.length) ?? ({ linkedin: 200, mos_random: 350, mos_top: 500 }[t.id]);
+    return `<button class="taskcard" type="button" data-t="${t.id}" style="--c:var(${t.color})"><b>${esc(t.title)}</b><span>${esc(t.desc)}</span>
+      <span class="prog">you ${myCount(t.id)} · team ${teamDone(t.id)}/${total}</span></button>`;
+  }).join("");
+  $("tasks").querySelectorAll("button").forEach(b => b.onclick = () => startTask(b.dataset.t));
+  $("s-task").textContent = "no task"; $("s-task").style.setProperty("--c", "var(--muted)");
+  show("taskpick");
+}
+async function startTask(id) {
+  TASK = id; store.set("task:" + CODER, id); hist = []; hpos = -1;
+  const t = TASK_BY[id];
+  $("s-task").textContent = t.title; $("s-task").style.setProperty("--c", `var(${t.color})`);
+  show("gate"); $("gate").innerHTML = "<h2>Loading…</h2><p>Unlocking the cases for this task.</p>";
+  try { await loadTask(id); } catch (e) { $("gate").innerHTML = `<h2>Couldn't load this task</h2><p>${esc(e.message)}</p>`; return; }
+  renderGuide();
+  await next();
+}
+function updateStats() {
+  $("s-me").textContent = myCount(TASK);
+  $("s-team").textContent = teamDone(TASK);
+  $("s-total").textContent = DATA[TASK].cases.length;
+}
+
+// ---------- queue ----------
+async function next() {
+  await refreshClaims();
+  const cases = DATA[TASK].cases.slice().sort((a, b) => hash(CODER + a.id) - hash(CODER + b.id));
+  // cases that already have one review but need a second come first, so agreement data builds up early
+  const half = c => BK && needs(TASK, c.id) === 2 && others(itemOf(TASK, c.id)) === 1 ? 0 : 1;
+  cases.sort((a, b) => half(a) - half(b));
+  const c = cases.find(c => { const it = itemOf(TASK, c.id); return !mine[it] && (!BK || others(it) < needs(TASK, c.id)); });
+  updateStats();
+  if (!c) { cur = null; return show("done"); }
+  openCase(c.id, true);
+}
+function openCase(id, push) {
+  const c = BYID[TASK].get(id);
+  const item = itemOf(TASK, id);
+  const saved = mine[item];
+  cur = {
+    item, task: TASK, c, t0: Date.now(), secs: saved?.secs || 0, active: 0,
+    pos: structuredClone(saved?.pos || {}), added: structuredClone(saved?.added || []),
+    identity: saved?.identity || "", complete: saved?.complete || "", note: saved?.note || "",
+    saved: !!saved, snap: "",
+  };
+  cur.snap = snapshot();
+  if (push) { hist = hist.slice(0, hpos + 1); hist.push(item); hpos = hist.length - 1; }
+  if (BK && !saved) api({ action: "claim", item, coder: CODER }).catch(() => {});
+  render();
+  show("work");
+  scrollTo({ top: 0 });
+}
+const snapshot = () => JSON.stringify([cur.pos, cur.added, cur.identity, cur.complete, $("note").value]);
+const dirty = () => cur && snapshot() !== cur.snap;
+
+// ---------- rendering ----------
+const isMos = () => TASK !== "linkedin";
+const cname = iso => (window.COUNTRIES || {})[iso] || DATA[TASK]?.countries?.[iso] || iso || "";
+const fmtD = (y, m) => y ? (m ? `${y}-${String(m).padStart(2, "0")}` : y) : "";
+function range(p) { const a = fmtD(p.start_year, p.start_month), b = fmtD(p.end_year, p.end_month) || (p.is_current === "1" ? "Present" : ""); return a || b ? `${a || "?"} – ${b || "?"}` : "undated"; }
+function srcColor(st) { return st === "linkedin" ? "--s-linkedin" : st === "web" ? "--s-web" : st === "mos" ? "--s-mos" : st === "wb_document" ? "--s-wb" : st === "added" ? "--add" : "--s-s200"; }
+function links(u) {
+  return String(u || "").split(/\s*;\s*|\s+(?=https?:)/).filter(Boolean).map(x => /^https?:\/\//.test(x) ? `<a href="${esc(x)}" target="_blank" rel="noopener noreferrer">${esc(x.replace(/^https?:\/\/(www\.)?/, "").slice(0, 60))}</a>` : esc(x)).join(" · ");
+}
+const fact = (k, v) => v ? `<div class="fact"><dt>${esc(k)}</dt><dd>${v}</dd></div>` : "";
+const projLink = p => p ? `<a href="https://projects.worldbank.org/en/projects-operations/project-detail/${esc(p)}" target="_blank" rel="noopener noreferrer">${esc(p)}</a>` : "";
+const idLabel = v => (IDENTITY[isMos() ? "mos" : "linkedin"].find(x => x[0] === v) || [v, v])[1];
+
+function render() {
+  const c = cur.c, t = TASK_BY[TASK];
+  $("casehead").style.setProperty("--c", `var(${t.color})`);
+  $("note").value = cur.note;
+  let h = "";
+  if (!isMos()) {
+    const url = c.linkedin_url ? (/^https?:/.test(c.linkedin_url) ? c.linkedin_url : "https://" + c.linkedin_url) : "";
+    h = `<div class="eyebrow">${esc(c.id)} · batch ${esc(c.batch)}${cur.saved ? " · you saved this case" : ""}</div>
+      <h2>${esc(c.name)}</h2>
+      ${c.headline ? `<p class="sub">${esc(c.headline)}${c.location ? " · " + esc(c.location) : ""}</p>` : ""}
+      <dl class="facts">
+        ${fact("WB contact", esc(c.wb_name))}${fact("WB position", esc(c.wb_position))}${fact("WB country", esc(c.wb_country))}
+        ${fact("Contact date", esc(c.wb_date))}${fact("Project", projLink(c.wb_project))}${fact("PDF snapshot", esc(c.snapshot))}
+      </dl>
+      <div class="links">${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">LinkedIn profile ↗</a>` : ""}${searchLinks(c.name, c.wb_country)}</div>
+      <div class="idnow"><span class="eyebrow">Current identity coding</span><span class="v">${esc(idLabel(c.identity))}</span>${c.identity_note ? `<span class="n">${esc(c.identity_note)}</span>` : ""}</div>`;
+    $("context").innerHTML = c.edu?.length ? `<details class="sect"><summary>Education (${c.edu.length})</summary><ul class="edu">${c.edu.map(e =>
+      `<li><b>${esc(e.inst)}</b>${e.degree ? " · " + esc(e.degree) : ""}${e.field ? " · " + esc(e.field) : ""}${e.from || e.to ? ` · ${esc(e.from || "?")}–${esc(e.to || "?")}` : ""}</li>`).join("")}</ul></details>` : "";
+  } else {
+    const ctry = cname(c.country);
+    h = `<div class="eyebrow">${esc(c.id)} · batch ${esc(c.batch)} · MOS ${esc(c.mos_pid)}${cur.saved ? " · you saved this case" : ""}</div>
+      <h2>${esc(c.name)}</h2>
+      ${c.name_mos && c.name_mos !== c.name ? `<p class="sub">Printed in the MOS as “${esc(c.name_mos)}”</p>` : ""}
+      <dl class="facts">
+        ${fact("Country", esc(ctry) + (c.noise ? ` <span class="warnline">(MOS printed it under ${esc(c.mos_country)})</span>` : ""))}
+        ${fact("Region", esc(c.region))}${fact("Gender", esc(c.gender))}
+        ${fact("In the MOS", `${esc(c.first_seen)} – ${esc(c.last_seen)}`)}${fact("Main MOS title", esc(c.title_cat))}${fact("Best MOS level", esc(c.mos_role ? c.mos_role + " · " + (LVL[c.mos_role]?.[1] || "") : ""))}
+        ${fact("Also in LinkedIn sample", esc(c.s200))}
+      </dl>
+      <div class="links">${searchLinks(c.name, ctry)}${c.name_mos && c.name_mos !== c.name ? searchLinks(c.name_mos, ctry, "MOS spelling: ") : ""}</div>
+      <div class="idnow"><span class="eyebrow">Current identity coding</span><span class="v">${esc(idLabel(c.identity))}</span>${c.identity_note ? `<span class="n">${esc(c.identity_note)}</span>` : ""}</div>`;
+    const ms = c.mentions || [];
+    $("context").innerHTML = `<details class="sect" open><summary>MOS listings for this person (${ms.length}${ms.length === 20 ? "+" : ""})</summary>
+      <div class="tablewrap"><table class="ment"><thead><tr><th>Issues</th><th>Project</th><th>As printed</th><th>Agency</th></tr></thead><tbody>
+      ${ms.map(m => `<tr><td class="d">${esc(m.from)}${m.to !== m.from ? " – " + esc(m.to) : ""}<br>${esc(m.n)} issue${m.n === "1" ? "" : "s"}</td>
+        <td>${projLink(m.project)}<br>${esc(m.project_title)}${m.country ? ` <span class="where">(${esc(m.country)})</span>` : ""}</td>
+        <td>${esc(m.contact)}${m.domain ? `<br><span class="where">email @${esc(m.domain)}</span>` : ""}</td><td>${esc(m.agency)}</td></tr>`).join("")}
+      </tbody></table></div></details>`;
+  }
+  $("casehead").innerHTML = h;
+  $("poslist").innerHTML = c.pos.map((p, i) => `<div class="pos" id="pc${i}"></div>`).join("") + cur.added.map((a, j) => `<div class="pos" id="pa${j}"></div>`).join("");
+  c.pos.forEach((p, i) => renderPos(i));
+  cur.added.forEach((a, j) => renderAdded(j));
+  renderJudge();
+  setActive(Math.max(0, c.pos.findIndex(p => !cur.pos[p.id]?.v)));
+  $("where").textContent = `Data ${DATA[TASK].version} · codebook ${CB_VERSION}${needs(TASK, c.id) === 2 ? " · double-coded case" : ""}`;
+  setStatus(cur.saved ? "Saved earlier. Changes overwrite your save." : "");
+}
+function searchLinks(name, country, pre = "") {
+  const q = encodeURIComponent(`"${name}" ${country || ""}`.trim());
+  return `<a href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener noreferrer">${esc(pre)}Google ↗</a>
+    <a href="https://www.google.com/search?q=${encodeURIComponent(`"${name}" site:linkedin.com`)}" target="_blank" rel="noopener noreferrer">${esc(pre)}LinkedIn ↗</a>
+    <a href="https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(name)}" target="_blank" rel="noopener noreferrer">${esc(pre)}Wikipedia ↗</a>`;
+}
+
+function codedHTML(v) {
+  const s = SECT[v.sector], l = LVL[String(v.role_level ?? "")];
+  return `<div class="coded"><div class="emp">${esc(v.employer) || "<i>no employer</i>"}</div><div class="ttl">${esc(v.title) || "<i>no title</i>"}</div>
+    <div class="tags">${v.sector ? `<span class="tag" title="${esc(s?.[2] || "")}"><b>${esc(v.sector)}</b> ${esc(s?.[1] || "")}</span>` : ""}
+    ${v.role_level ? `<span class="tag"><b>L${esc(v.role_level)}</b> ${esc(l?.[1] || "")}</span>` : ""}
+    ${v.country_iso3 ? `<span class="tag"><b>${esc(v.country_iso3)}</b> ${esc(cname(v.country_iso3))}</span>` : ""}</div></div>`;
+}
+function rawHTML(p) {
+  const r = [];
+  const diff = (a, b) => a && b && a.trim() !== b.trim();
+  if (p.st === "linkedin" || p.st === "s200_linkedin") {
+    if (p.raw_employer || p.raw_title) r.push(`<div><span class="k">PDF</span>${diff(p.raw_employer, p.employer) ? `<mark>${esc(p.raw_employer)}</mark>` : esc(p.raw_employer)} — ${diff(p.raw_title, p.title) ? `<mark>${esc(p.raw_title)}</mark>` : esc(p.raw_title)}</div>`);
+    if (p.raw_location || p.raw_date) r.push(`<div><span class="k">PDF</span>${esc(p.raw_location)}${p.raw_location && p.raw_date ? " · " : ""}${esc(p.raw_date)}${p.page ? ` · page ${esc(p.page)}` : ""}</div>`);
+    if (p.country_source) r.push(`<div><span class="k">Country from</span>${esc(p.country_source.replace("_", " "))}</div>`);
+  }
+  if (p.note) r.push(`<div><span class="k">Note</span>${esc(p.note)}</div>`);
+  if (p.evidence) r.push(`<div><span class="k">Evidence</span>${esc(p.evidence)}</div>`);
+  if (p.url && !/^MOS \(/.test(p.url)) r.push(`<div><span class="k">Source</span>${links(p.url)}${p.conf ? ` · confidence ${esc(p.conf)}` : ""}</div>`);
+  else if (p.conf && p.st !== "mos") r.push(`<div><span class="k">Confidence</span>${esc(p.conf)}</div>`);
+  if (p.dates_url) r.push(`<div><span class="k">Dates from</span>${links(p.dates_url)}</div>`);
+  if (p.qa) r.push(`<div><span class="k">QA</span>${esc(p.qa)}</div>`);
+  let out = r.length ? `<div class="raw">${r.join("")}</div>` : "";
+  if (p.desc) out += `<details class="desc"><summary>Description (${p.desc.split(/\s+/).length} words)</summary><p>${esc(p.desc)}</p></details>`;
+  return out;
+}
+function formHTML(orig, vals, extra) {
+  const field = (f, label, cls, input) => {
+    const chg = orig && String(vals[f] ?? "").trim() !== String(orig[f] ?? "").trim();
+    return `<label class="${cls || ""}${chg ? " chg" : ""}" data-f="${f}">${label}${input}${orig ? `<span class="was">${chg ? "was: " + esc(orig[f] || "—") : ""}</span>` : ""}</label>`;
+  };
+  const txt = (f, ph = "") => `<input type="text" data-f="${f}" value="${esc(vals[f] ?? "")}" placeholder="${esc(ph)}">`;
+  const num = (f, min, max) => `<input type="number" data-f="${f}" min="${min}" max="${max}" value="${esc(vals[f] ?? "")}">`;
+  const sel = (f, opts) => `<select data-f="${f}"><option value=""></option>${opts.map(o => `<option value="${esc(o[0])}"${String(vals[f] ?? "") === o[0] ? " selected" : ""}>${esc(o[0])} · ${esc(o[1])}</option>`).join("")}</select>`;
+  return `<div class="form">
+    ${field("employer", "Employer", "wide", txt("employer"))}${field("title", "Title", "wide", txt("title"))}
+    ${field("sector", "Sector", "", sel("sector", SECTORS))}${field("role_level", "Role level", "", sel("role_level", ROLE_LEVELS))}
+    ${field("country_iso3", "Country (ISO3)", "", `<input type="text" data-f="country_iso3" list="isolist" maxlength="5" value="${esc(vals.country_iso3 ?? "")}" style="text-transform:uppercase">`)}
+    ${field("start_year", "Start year", "", num("start_year", 1940, 2030))}${field("start_month", "Start month", "", num("start_month", 1, 12))}
+    ${field("end_year", "End year", "", num("end_year", 1940, 2030))}${field("end_month", "End month", "", num("end_month", 1, 12))}
+    ${extra || ""}</div>`;
+}
+function renderPos(i) {
+  const p = cur.c.pos[i], s = cur.pos[p.id] || {}, el = $("pc" + i);
+  const vals = s.v === "fix" ? { ...Object.fromEntries(F.map(f => [f, p[f] ?? ""])), ...(s.e || {}) } : p;
+  el.className = `pos${s.v ? " v-" + s.v : ""}${cur.active === i ? " on" : ""}`;
+  const timing = p.timing ? `<span class="badge${p.timing === "during" ? " strong" : ""}">${esc(p.timing)} WB contact</span>` : "";
+  el.innerHTML = `<div class="top"><span class="num">#${esc(p.seq)}</span><span class="src" style="--c:var(${srcColor(p.st)})">${esc(SOURCE_TYPES[p.st] || p.st)}</span>
+      <span class="dates">${esc(range(p))}</span>${p.date_precision && p.date_precision !== "month" ? `<span class="badge">${esc(p.date_precision)} precision</span>` : ""}${timing}
+      ${p.wb_project_role ? `<span class="badge strong">WB project</span>` : ""}
+      <span class="verdict">${s.v === "ok" ? "Correct" : s.v === "fix" ? "Fixed" : s.v === "drop" ? "Dropped" : ""}</span></div>
+    ${codedHTML(vals)}${rawHTML(p)}
+    <div class="acts"><button class="ok" type="button" data-a="ok" aria-pressed="${s.v === "ok"}">✓ Correct <kbd>A</kbd></button>
+      <button class="fix" type="button" data-a="fix" aria-pressed="${s.v === "fix"}">✎ Fix <kbd>E</kbd></button>
+      <button class="drop" type="button" data-a="drop" aria-pressed="${s.v === "drop"}">✗ Drop <kbd>D</kbd></button></div>
+    ${s.v === "drop" ? `<div class="chips">${DROP_REASONS.map(r => `<button class="chip" type="button" style="--c:var(--drop)" data-r="${r[0]}" aria-pressed="${s.reason === r[0]}">${esc(r[1])}</button>`).join("")}</div>` : ""}
+    ${s.v === "fix" ? formHTML(p, vals, `<label class="full" data-f="url">Source for the correction (optional URL)<input type="url" data-f="url" value="${esc(s.url || "")}" placeholder="https://…"></label>`) : ""}
+    ${s.v ? `<div class="note"><input type="text" data-f="note" maxlength="300" placeholder="Note on this position (optional)" value="${esc(s.note || "")}"></div>` : ""}`;
+  el.onclick = () => setActive(i, true);
+  el.querySelectorAll("[data-a]").forEach(b => b.onclick = ev => { ev.stopPropagation(); act(i, b.dataset.a); });
+  el.querySelectorAll("[data-r]").forEach(b => b.onclick = ev => { ev.stopPropagation(); s.reason = b.dataset.r; renderPos(i); });
+  el.querySelectorAll("input[data-f],select[data-f]").forEach(inp => inp.oninput = inp.onchange = () => {
+    const f = inp.dataset.f, v = f === "country_iso3" ? inp.value.toUpperCase() : inp.value;
+    if (f === "note") s.note = v; else if (f === "url") s.url = v;
+    else {
+      (s.e ||= {})[f] = v;
+      const lab = inp.closest("label"), chg = String(v).trim() !== String(p[f] ?? "").trim();
+      lab.classList.toggle("chg", chg); lab.querySelector(".was").textContent = chg ? "was: " + (p[f] || "—") : "";
+      el.querySelector(".coded").outerHTML = codedHTML({ ...Object.fromEntries(F.map(k => [k, p[k] ?? ""])), ...s.e });
+    }
+  });
+}
+function act(i, a) {
+  const p = cur.c.pos[i], s = (cur.pos[p.id] ||= {});
+  s.v = s.v === a ? "" : a;
+  if (!s.v) delete cur.pos[p.id];
+  renderPos(i); setActive(i);
+  if (s.v === "fix") $("pc" + i).querySelector(".form input")?.focus();
+  if (s.v === "ok") { const n = cur.c.pos.findIndex((q, k) => k > i && !cur.pos[q.id]?.v); if (n >= 0) setActive(n, false, true); }
+}
+function renderAdded(j) {
+  const a = cur.added[j], el = $("pa" + j);
+  el.className = `pos v-add${cur.active === "a" + j ? " on" : ""}`;
+  el.innerHTML = `<div class="top"><span class="num">new</span><span class="src" style="--c:var(--add)">Added by you</span><span class="dates">${esc(range(a.e))}</span>
+      <span class="verdict">Added</span><button class="btn small" type="button" data-x>Remove</button></div>
+    ${formHTML(null, a.e, `<label class="full">Source URL${isMos() ? " (required)" : " (or where in the PDF)"}<input type="url" data-k="url" value="${esc(a.url || "")}" placeholder="https://…"></label>
+      <label class="full">Note (optional)<input type="text" data-k="note" maxlength="300" value="${esc(a.note || "")}" placeholder="e.g. found on ministry website; dates approximate"></label>`)}`;
+  el.onclick = () => setActive("a" + j, true);
+  el.querySelector("[data-x]").onclick = ev => { ev.stopPropagation(); cur.added.splice(j, 1); render(); };
+  el.querySelectorAll("input[data-f],select[data-f]").forEach(inp => inp.oninput = inp.onchange = () => {
+    a.e[inp.dataset.f] = inp.dataset.f === "country_iso3" ? inp.value.toUpperCase() : inp.value;
+    el.querySelector(".dates").textContent = range(a.e);
+  });
+  el.querySelectorAll("input[data-k]").forEach(inp => inp.oninput = () => { a[inp.dataset.k] = inp.value; });
+}
+$("addpos").onclick = () => addPos();
+function addPos() {
+  cur.added.push({ e: { country_iso3: cur.c.country && cur.c.country !== "MULTI" ? cur.c.country : "" }, url: "", note: "" });
+  const j = cur.added.length - 1;
+  $("poslist").insertAdjacentHTML("beforeend", `<div class="pos" id="pa${j}"></div>`);
+  renderAdded(j); setActive("a" + j);
+  $("pa" + j).scrollIntoView({ block: "center", behavior: "smooth" });
+  $("pa" + j).querySelector("input").focus();
+}
+function setActive(k, quiet, scroll) {
+  const prev = cur.active; cur.active = k;
+  const elOf = x => typeof x === "string" ? $("p" + x) : $("pc" + x);
+  if (prev !== k && elOf(prev)) elOf(prev).classList.remove("on");
+  elOf(k)?.classList.add("on");
+  if (scroll) elOf(k)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+function renderJudge() {
+  const opts = IDENTITY[isMos() ? "mos" : "linkedin"], orig = cur.c.identity;
+  let h = `<h3>Your judgement on this case</h3>
+    <div class="q"><span>Identity match: is the career above the same person as the ${isMos() ? "MOS contact" : "World Bank contact"}? Currently coded <b>${esc(idLabel(orig))}</b>.</span>
+    <div class="chips" id="idchips">${opts.map(o => `<button class="chip" type="button" data-id="${o[0]}" title="${esc(o[2])}" aria-pressed="${cur.identity === o[0]}">${esc(o[1])}${o[0] === orig ? '<span class="was">(current)</span>' : ""}</button>`).join("")}</div></div>`;
+  if (isMos()) h += `<div class="q"><span>Did you search for missing positions?</span>
+    <div class="chips" id="cchips">${COMPLETENESS.map(o => `<button class="chip" type="button" data-c="${o[0]}" title="${esc(o[2])}" aria-pressed="${cur.complete === o[0]}">${esc(o[1])}</button>`).join("")}</div></div>`;
+  h += `<ul class="problems" id="problems" hidden></ul>`;
+  $("judge").innerHTML = h;
+  $("judge").querySelectorAll("[data-id]").forEach(b => b.onclick = () => { cur.identity = b.dataset.id; renderJudge(); });
+  $("judge").querySelectorAll("[data-c]").forEach(b => b.onclick = () => { cur.complete = b.dataset.c; renderJudge(); });
+}
+
+// ---------- validation and save ----------
+function checkVals(v, where, out) {
+  for (const f of ["start_year", "end_year"]) if (v[f] !== "" && v[f] != null && !(+v[f] >= 1940 && +v[f] <= 2030 && Number.isInteger(+v[f]))) out.push(`${where}: ${f.replace("_", " ")} must be a year`);
+  for (const f of ["start_month", "end_month"]) if (v[f] !== "" && v[f] != null && !(+v[f] >= 1 && +v[f] <= 12 && Number.isInteger(+v[f]))) out.push(`${where}: ${f.replace("_", " ")} must be 1–12`);
+  if (v.country_iso3 && !(window.COUNTRIES || {})[v.country_iso3]) out.push(`${where}: country "${v.country_iso3}" is not an ISO3 code`);
+  if (v.start_year && v.end_year && +v.end_year < +v.start_year) out.push(`${where}: ends before it starts`);
+  if (v.sector && !SECT[v.sector]) out.push(`${where}: unknown sector`);
+}
+function problems() {
+  const out = [];
+  cur.c.pos.forEach(p => {
+    const s = cur.pos[p.id], w = `#${p.seq} ${p.employer || p.title || ""}`.slice(0, 50);
+    if (!s?.v) out.push(`${w}: mark Correct, Fix or Drop`);
+    else if (s.v === "drop" && !s.reason) out.push(`${w}: choose why it is dropped`);
+    else if (s.v === "fix") {
+      const v = { ...Object.fromEntries(F.map(f => [f, p[f] ?? ""])), ...(s.e || {}) };
+      if (!changed(p, s).length) out.push(`${w}: nothing was changed; mark it Correct instead`);
+      checkVals(v, w, out);
+    }
+  });
+  cur.added.forEach((a, j) => {
+    const w = `New position ${j + 1}`;
+    if (!a.e.employer && !a.e.title) out.push(`${w}: needs an employer or title`);
+    if (!a.e.sector) out.push(`${w}: needs a sector`);
+    if (!a.e.role_level) out.push(`${w}: needs a role level`);
+    if (isMos() && !/^https?:\/\/\S+/.test(a.url || "")) out.push(`${w}: needs a source URL`);
+    checkVals(a.e, w, out);
+  });
+  if (!cur.identity) out.push("Choose an identity match");
+  if (isMos() && !cur.complete) out.push("Say whether you searched for missing positions");
+  return out;
+}
+const changed = (p, s) => F.filter(f => s.e && f in s.e && String(s.e[f]).trim() !== String(p[f] ?? "").trim());
+
+const POS_COLS = ["coder", "task", "case_id", "position_id", "source_type", "action", "drop_reason", "changed_fields", ...F, "source_url", "position_note", "codebook_version", "data_version", "saved_at"];
+const PER_COLS = ["coder", "task", "case_id", "name", "batch", "identity_orig", "identity_coded", "identity_changed", "completeness", "n_positions_orig", "n_ok", "n_fixed", "n_dropped", "n_added", "case_note", "seconds_spent", "double_coded", "codebook_version", "data_version", "saved_at"];
+function rowsFor(b, c, task, coder) {
+  const at = new Date(b.at).toISOString(), dv = b.dv, cbv = b.cbv, n = { ok: 0, fix: 0, drop: 0 };
+  const pos = c.pos.map(p => {
+    const s = b.pos[p.id] || {}; n[s.v] = (n[s.v] || 0) + 1;
+    const ch = s.v === "fix" ? changed(p, s) : [];
+    const v = s.v === "fix" ? { ...Object.fromEntries(F.map(f => [f, p[f] ?? ""])), ...s.e } : p;
+    return [coder, task, c.id, p.id, p.st, s.v === "fix" ? "fixed" : s.v === "drop" ? "dropped" : s.v === "ok" ? "ok" : "", s.v === "drop" ? s.reason : "", ch.join("|"),
+      ...F.map(f => String(v[f] ?? "").trim()), s.url || "", s.note || "", cbv, dv, at];
+  });
+  b.added.forEach((a, j) => pos.push([coder, task, c.id, `${c.id}_A${j + 1}`, "added", "added", "", "", ...F.map(f => String(a.e[f] ?? "").trim()), a.url || "", a.note || "", cbv, dv, at]));
+  const per = [[coder, task, c.id, c.name, c.batch, c.identity, b.identity, b.identity !== c.identity ? 1 : 0, b.complete || "", c.pos.length, n.ok, n.fix, n.drop, b.added.length, b.note || "", Math.round(b.secs), needs(task, c.id) === 2 ? 1 : 0, cbv, dv, at]];
+  return [{ name: "positions", cols: POS_COLS, rows: pos }, { name: "persons", cols: PER_COLS, rows: per }];
+}
+async function save() {
+  const probs = problems();
+  const pl = $("problems");
+  if (probs.length) {
+    pl.innerHTML = probs.slice(0, 12).map(p => `<li>${esc(p)}</li>`).join("") + (probs.length > 12 ? `<li>…and ${probs.length - 12} more</li>` : "");
+    pl.hidden = false; setStatus(`${probs.length} thing${probs.length > 1 ? "s" : ""} to finish`, true);
+    pl.scrollIntoView({ block: "center", behavior: "smooth" });
+    const first = cur.c.pos.findIndex(p => !cur.pos[p.id]?.v); if (first >= 0) setActive(first);
+    return;
+  }
+  cur.note = $("note").value.trim();
+  const body = { item: cur.item, task: TASK, case_id: cur.c.id, cbv: CB_VERSION, dv: DATA[TASK].version, at: Date.now(),
+    pos: cur.pos, added: cur.added, identity: cur.identity, complete: cur.complete, note: cur.note, secs: cur.secs + (Date.now() - cur.t0) / 1000 };
+  if (JSON.stringify(body).length > 44000) { setStatus("This case is too large to save; shorten your notes.", true); return; }
+  mine[cur.item] = body; saveLocal();
+  $("save").disabled = true; setStatus("Saving…");
+  if (BK) {
+    try { await api({ action: "save", coder: CODER, item: cur.item, body, tables: rowsFor(body, cur.c, TASK, CODER) }); }
+    catch (e) { $("save").disabled = false; setStatus("Saved in this browser, but not to the sheet: " + e.message + ". Try again.", true); return; }
+  }
+  $("save").disabled = false;
+  cur.snap = snapshot();
+  if (hpos < hist.length - 1) { hpos++; openCase(hist[hpos].slice(TASK.length + 1), false); setStatus("Saved."); }
+  else { await next(); setStatus("Saved. Next case."); }
+}
+$("save").onclick = save;
+function setStatus(t, err) { $("status").textContent = t; $("status").classList.toggle("err", !!err); }
+$("prev").onclick = () => { if (hpos <= 0) { setStatus("No earlier case in this session. Use “Go to ID” to open one you saved."); return; } if (dirty() && !confirm("Leave this case without saving?")) return; hpos--; openCase(hist[hpos].slice(TASK.length + 1), false); };
+$("fwd").onclick = async () => { if (dirty() && !confirm("Leave this case without saving?")) return; if (hpos < hist.length - 1) { hpos++; openCase(hist[hpos].slice(TASK.length + 1), false); } else await next(); };
+$("done-back").onclick = () => { if (hist.length) { hpos = hist.length - 1; openCase(hist[hpos].slice(TASK.length + 1), false); } };
+$("done-task").onclick = pickTask;
+$("goto").onkeydown = async e => {
+  if (e.key !== "Enter") return;
+  const id = $("goto").value.trim().toUpperCase(), t = PREFIX[id[0]];
+  if (!t) { setStatus("IDs look like P012, M105 or T330.", true); return; }
+  if (dirty() && !confirm("Leave this case without saving?")) return;
+  if (t !== TASK) { TASK = t; store.set("task:" + CODER, t); hist = []; hpos = -1; await loadTask(t); $("s-task").textContent = TASK_BY[t].title; $("s-task").style.setProperty("--c", `var(${TASK_BY[t].color})`); renderGuide(); updateStats(); }
+  if (!BYID[t].has(id)) { setStatus(`No case ${id} in this task.`, true); return; }
+  $("goto").value = ""; openCase(id, true);
+};
+addEventListener("beforeunload", e => { if (dirty()) { e.preventDefault(); e.returnValue = ""; } });
+
+// keyboard
+addEventListener("keydown", e => {
+  if ($("work").hidden || !cur) return;
+  if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); save(); return; }
+  if (e.target.closest?.("input,select,textarea") || e.metaKey || e.ctrlKey || e.altKey) return;
+  const n = cur.c.pos.length, k = e.key.toLowerCase(), a = cur.active;
+  const idx = typeof a === "number" ? a : n + +a.slice(1);
+  const go = x => { x = Math.max(0, Math.min(n + cur.added.length - 1, x)); setActive(x < n ? x : "a" + (x - n), false, true); };
+  if (k === "j") { e.preventDefault(); go(idx + 1); }
+  else if (k === "k") { e.preventDefault(); go(idx - 1); }
+  else if (k === "n") { e.preventDefault(); addPos(); }
+  else if (typeof a === "number" && "aed".includes(k) && k.length === 1) { e.preventDefault(); act(a, { a: "ok", e: "fix", d: "drop" }[k]); }
+});
+
+// ---------- CSV download ----------
+$("dl").onclick = async () => {
+  const pos = [], per = [];
+  for (const [item, b] of Object.entries(mine)) {
+    try { await loadTask(b.task); } catch { continue; }
+    const c = BYID[b.task].get(b.case_id); if (!c) continue;
+    const [tp, tq] = rowsFor(b, c, b.task, CODER); pos.push(...tp.rows); per.push(...tq.rows);
+  }
+  if (!per.length) { setStatus("You haven't saved any cases yet."); return; }
+  const csv = (cols, rows) => [cols, ...rows].map(r => r.map(x => { x = String(x ?? ""); return /[",\n\r]/.test(x) ? `"${x.replace(/"/g, '""')}"` : x; }).join(",")).join("\r\n");
+  const dl = (name, text) => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + text], { type: "text/csv" })); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); };
+  dl(`review_positions_${CODER}.csv`, csv(POS_COLS, pos));
+  setTimeout(() => dl(`review_persons_${CODER}.csv`, csv(PER_COLS, per)), 400);
+  setStatus(`Downloaded ${per.length} cases, ${pos.length} positions.`);
+};
+
+// ---------- guide ----------
+function renderGuide() {
+  const mos = isMos();
+  const dl = rows => `<dl>${rows.map(r => `<dt>${esc(r[0])}</dt><dd><b>${esc(r[1])}</b>${r[2] ? " · " + esc(r[2]) : ""}</dd>`).join("")}</dl>`;
+  $("guide-body").innerHTML = `
+    <h4>What you are doing</h4>
+    <p>${mos
+      ? "Each case is one borrower-side official named in the World Bank's Monthly Operational Summary (MOS). Their career was assembled from their MOS listings (green <i>MOS</i> rows), from web sources (purple <i>Web</i> rows, each with a source link) and sometimes from our LinkedIn sample. Check every row, fix what is wrong, drop rows that belong to someone else, then search for jobs that are missing and add them with a source link."
+      : "Each case is one World Bank counterpart whose LinkedIn PDF we parsed. Every job was coded for sector, role level and country. Check each coded row against what the PDF printed (shown under the coded values; differences are highlighted). Open the LinkedIn profile if you need more context. Rows tagged <i>Web</i> or <i>WB document</i> were added from other sources: check that the source supports them."}</p>
+    <h4>For every position</h4>
+    <ul><li><b>✓ Correct</b> (<kbd>A</kbd>): employer, title, sector, role level, country and dates are all right.</li>
+      <li><b>✎ Fix</b> (<kbd>E</kbd>): change the fields that are wrong. Changed fields turn orange and show the old value. Add a source link if the fix comes from outside the case.</li>
+      <li><b>✗ Drop</b> (<kbd>D</kbd>): the row should not be in this person's career. Say why.</li>
+      <li><b>+ Add</b> (<kbd>N</kbd>): a job is missing. ${mos ? "A source URL is required." : "Say where it comes from (PDF page or URL)."}</li></ul>
+    <p>Judge the coding, not the formatting: don't fix capitalisation or abbreviations unless they change the meaning. Dates: use the year and month the source gives; leave months blank if the source gives only years. A current job has no end date.</p>
+    <h4>Sectors</h4>${dl(SECTORS)}
+    <h4>Role levels</h4>${dl(ROLE_LEVELS)}
+    <p>Code the role level of the job itself, not the person's career peak. Acting heads take the level of the post. Project coordinators of donor projects are 3; PIU staff below them are 4 or 5.</p>
+    <h4>Identity match</h4>${dl(IDENTITY[mos ? "mos" : "linkedin"])}
+    <p>${mos
+      ? "Watch for namesakes: common names often match a different minister or official. About one MOS listing in six is printed under the wrong country, so trust the agency, project and title more than the country label."
+      : "Compare the WB contact's position, country, project and date with the profile. A job at the same agency or on the same project around the contact date confirms the match."}</p>
+    ${mos ? `<h4>Searching for missing positions</h4><p>Use the search links under the name. Try the MOS spelling, local-language spellings and the person's agency. Prefer official sources (government sites, gazettes, CVs, World Bank documents) and say in the note when dates are approximate.</p>${dl(COMPLETENESS)}` : ""}
+    <h4>Saving</h4><p>Press <b>Save &amp; next case</b> (or <kbd>⌘/Ctrl</kbd>+<kbd>Enter</kbd>). The page lists anything you still need to answer. You can go back to a saved case with <b>← Back</b> or <b>Go to ID</b> and save it again; the new save replaces the old one.${BK ? "" : " Reviews are kept in this browser only: press <b>Download my reviews</b> and send both CSV files to your supervisor."}</p>`;
+}
+
+// ISO3 list for the country field
+addEventListener("hashchange", () => { if (/[#&]k=/.test(location.hash)) location.reload(); });
+document.body.insertAdjacentHTML("beforeend", `<datalist id="isolist">${Object.entries(window.COUNTRIES || {}).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("")}</datalist>`);
+boot();
+</script>
+</body>
+</html>
