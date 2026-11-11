@@ -39,6 +39,15 @@ function doPost(e) {
 }
 
 function handle_(p) {
+  // Counts only (no names or links), so the lab landing page can show progress without the key.
+  if (p.action === 'progress') {
+    try {
+      var cs = companies_(), byYear = {};
+      var t = table_();
+      t.values.forEach(function (r) { if (r[t.col.status] === 'saved') { var y = String(r[t.col.report_year] || ''); byYear[y] = (byYear[y] || 0) + 1; } });
+      return out_({ ok: true, companies: cs.map(function (c) { return [c.rank, c.done ? 2 : c.coder ? 1 : 0, c.done_rows, c.rows]; }), saved_by_year: byYear });
+    } catch (err) { return out_({ ok: false, error: String(err.message || err) }); }
+  }
   var key = String(PropertiesService.getScriptProperties().getProperty('KEY') || '').trim();
   if (!key || String(p.k || '').trim() !== key) return out_({ ok: false, error: 'Wrong or missing project key' });
   try {

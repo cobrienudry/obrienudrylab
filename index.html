@@ -5,28 +5,83 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>O'Brien-Udry Lab Tools</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-:root { --bg: #eef1f4; --surface: #fff; --ink: #172230; --muted: #5a6776; --line: #d3dae2; --accent: #1d4f91; color-scheme: light; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #11161c; --surface: #1a2129; --ink: #e4e9ef; --muted: #93a0ae; --line: #2e3842; --accent: #6fa3e8; color-scheme: dark; } }
-:root[data-theme="dark"] { --bg: #11161c; --surface: #1a2129; --ink: #e4e9ef; --muted: #93a0ae; --line: #2e3842; --accent: #6fa3e8; color-scheme: dark; }
+:root { --bg: #eef1f4; --surface: #fff; --ink: #172230; --muted: #5a6776; --line: #d3dae2; --accent: #1d4f91;
+  --done: #1d4f91; --doing: #8fb0dc; --todo: #e1e6ec; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #11161c; --surface: #1a2129; --ink: #e4e9ef; --muted: #93a0ae; --line: #2e3842; --accent: #6fa3e8;
+  --done: #6fa3e8; --doing: #36557f; --todo: #2a333d; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #11161c; --surface: #1a2129; --ink: #e4e9ef; --muted: #93a0ae; --line: #2e3842; --accent: #6fa3e8;
+  --done: #6fa3e8; --doing: #36557f; --todo: #2a333d; color-scheme: dark; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 "IBM Plex Sans", system-ui, sans-serif; padding: 32px 16px; }
 main { max-width: 760px; margin: 0 auto; display: grid; gap: 14px; }
 h1 { margin: 0 0 4px; font-size: 22px; }
 p { margin: 0; color: var(--muted); }
-a.card { display: grid; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--accent); border-radius: 10px; padding: 14px 16px; color: var(--ink); text-decoration: none; }
-a.card:hover { border-color: var(--muted); border-left-color: var(--accent); }
-a.card b { font-size: 16px; }
+.card { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--accent); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.card > a { display: grid; gap: 4px; color: var(--ink); text-decoration: none; }
+.card > a b { font-size: 16px; }
+.card > a:hover b { text-decoration: underline; }
+.card > a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.card > a span { color: var(--muted); }
+.prog { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 8px; min-width: 0; }
+.prog .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.prog .big { font: 600 20px "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }
+.prog .of { color: var(--muted); font-size: 13.5px; }
+.prog .when { margin-left: auto; color: var(--muted); font-size: 12px; }
+.prog .note { color: var(--muted); font-size: 13.5px; }
+.legend { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 12.5px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.sw-done { background: var(--done); } .sw-doing { background: var(--doing); } .sw-todo { background: var(--todo); }
+/* stacked bar */
+.bar { display: flex; gap: 2px; height: 12px; min-width: 0; }
+.bar > span { height: 100%; min-width: 0; }
+.bar > span:first-child { border-radius: 4px 0 0 4px; } .bar > span:last-child { border-radius: 0 4px 4px 0; } .bar > span:only-child { border-radius: 4px; }
+/* rows of bars */
+.rows { display: grid; grid-template-columns: max-content minmax(0, 1fr) max-content; gap: 5px 10px; align-items: center; font-size: 13px; }
+.rows .lab { color: var(--ink); white-space: nowrap; }
+.rows .num { font: 12.5px "IBM Plex Mono", monospace; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+.rows .bar { height: 10px; }
+.rows > * { padding: 1px 0; }
+.rowhit:hover, .rowhit:hover + * , .rowhit:hover + * + * { background: transparent; }
+/* waffle */
+.waffle { display: grid; grid-template-columns: repeat(50, minmax(0, 1fr)); gap: 2px; }
+.waffle i { aspect-ratio: 1; border-radius: 2px; background: var(--todo); }
+.waffle i.s1 { background: var(--doing); } .waffle i.s2 { background: var(--done); }
+@media (max-width: 520px) { .waffle { grid-template-columns: repeat(25, minmax(0, 1fr)); } }
+.axis { display: flex; justify-content: space-between; font: 11.5px "IBM Plex Mono", monospace; color: var(--muted); }
+#tip { position: fixed; pointer-events: none; z-index: 10; background: var(--ink); color: var(--surface); font-size: 12.5px; line-height: 1.35; padding: 5px 8px; border-radius: 6px; max-width: 260px; opacity: 0; transition: opacity .08s; }
+#tip.on { opacity: 1; }
+details.tbl summary { cursor: pointer; font-size: 12.5px; color: var(--muted); }
+details.tbl table { border-collapse: collapse; font-size: 12.5px; margin-top: 6px; }
+details.tbl td, details.tbl th { padding: 2px 10px 2px 0; text-align: left; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
 <main>
   <div><h1>O'Brien-Udry Lab</h1><p>Research-assistant tools. Use the link your supervisor sent you; it includes the project key.</p></div>
-  <a class="card" href="bureaucrat-review/"><b>Bureaucrat &amp; MOS review</b><span>Check the digitized Monthly Operational Summaries (extraction, page completeness, linking across issues) and the coded career histories of World Bank counterpart bureaucrats.</span></a>
-  <a class="card" href="https://cobrienudry.github.io/aid-withdrawal-speech/"><b>Aid withdrawal speech</b><span>Code the speech acts in news articles about aid withdrawal: themes (pain, autonomy, technocratic, security, accommodation, praise) and details on topic, speaker and venue.</span></a>
-  <a class="card" href="https://storage.googleapis.com/ksm-rch-mining-analysis-mine-maps-docs/wayback-review/index.html#project"><b>Galamsey mine mapping</b><span>Search satellite imagery cell by cell for small-scale gold mines in Ghana, outline each mine and find the year it opened. Start with the RA guide.</span></a>
-  <a class="card" href="carbon-offsets/"><b>Carbon offsets in corporate reporting</b><span>Collect Fortune 500 sustainability reports and annual shareholder documents, or write a short summary of how one company's reporting on carbon offsets changed over time.</span></a>
+
+  <section class="card">
+    <a href="bureaucrat-review/"><b>Bureaucrat &amp; MOS review</b><span>Check the digitized Monthly Operational Summaries (extraction, page completeness, linking across issues) and the coded career histories of World Bank counterpart bureaucrats.</span></a>
+    <div class="prog" id="p-bureau" aria-live="polite"><span class="note">Team progress isn't tracked yet: reviews are saved in each RA's own browser until the project sheet is connected.</span></div>
+  </section>
+
+  <section class="card">
+    <a href="https://cobrienudry.github.io/aid-withdrawal-speech/"><b>Aid withdrawal speech</b><span>Code the speech acts in news articles about aid withdrawal: themes (pain, autonomy, technocratic, security, accommodation, praise) and details on topic, speaker and venue.</span></a>
+    <div class="prog" id="p-speech" aria-live="polite"><span class="note">Loading progress…</span></div>
+  </section>
+
+  <section class="card">
+    <a href="https://storage.googleapis.com/ksm-rch-mining-analysis-mine-maps-docs/wayback-review/index.html#project"><b>Galamsey mine mapping</b><span>Search satellite imagery cell by cell for small-scale gold mines in Ghana, outline each mine and find the year it opened. Start with the RA guide.</span></a>
+    <div class="prog" id="p-gal" aria-live="polite"><span class="note">Loading progress…</span></div>
+  </section>
+
+  <section class="card">
+    <a href="carbon-offsets/"><b>Carbon offsets in corporate reporting</b><span>Collect Fortune 500 sustainability reports and annual shareholder documents, or write a short summary of how one company's reporting on carbon offsets changed over time.</span></a>
+    <div class="prog" id="p-co" aria-live="polite"><span class="note">Loading progress…</span></div>
+  </section>
 </main>
+<div id="tip" role="tooltip"></div>
+<script src="progress.js"></script>
 </body>
 </html>
