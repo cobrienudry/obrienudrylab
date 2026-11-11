@@ -18,7 +18,7 @@ Until `BACKEND_URL` is set, Task 1 shows the by-hand instructions instead of the
 ## Setup (once, ~5 minutes)
 
 1. Open the report spreadsheet, then **Extensions → Apps Script**.
-2. **Project Settings** (gear) → tick **Show "appsscript.json" manifest file in editor**. Back in the editor, replace `appsscript.json` with `backend/appsscript.json` and `Code.gs` with `backend/Code.gs`. Save.
+2. **Project Settings** (gear) → tick **Show "appsscript.json" manifest file in editor**. Back in the editor, replace `appsscript.json` with `backend/appsscript.json` and `Code.gs` with `backend/Code.gs`. Save. (The manifest turns on the **Drive API** service; if the sidebar under **Services** doesn't list it, click **+ → Drive API → Add**. Without it `setup` fails with "Drive error 403: Google Drive API has not been used in project…")
 3. **Project Settings → Script properties → Add** `KEY` = the project key. Optional: `SHEET_GID` (the tab with the report list, default `1358907780`).
 4. In the editor, pick **setup** in the function menu and click **Run**. Authorize it. Google asks only for:
    - *View and manage spreadsheets that this application has been installed in* (this spreadsheet only)
