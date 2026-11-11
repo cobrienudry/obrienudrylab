@@ -57,6 +57,48 @@ textarea { min-height: 90px; resize: vertical; }
 .count.ok { color: var(--green); }
 .status { font: 13px "IBM Plex Mono", monospace; color: var(--muted); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.muted { color: var(--muted); }
+.status.err, .err { color: #a3302a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .status.err, :root:not([data-theme="light"]) .err { color: #ef7f74; } }
+.btn.small, select.small { font-size: 12.5px; padding: 4px 9px; width: auto; }
+.btn:disabled, .btn.disabled { opacity: .45; cursor: default; }
+.tool { display: grid; gap: 14px; margin-top: 12px; }
+.tool label.inl { display: grid; gap: 4px; }
+.pickrow { display: grid; grid-template-columns: minmax(140px, 1fr) minmax(0, 3fr); gap: 10px; align-items: end; }
+@media (max-width: 560px) { .pickrow { grid-template-columns: 1fr; } }
+select { font: 14px inherit; font-family: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 7px 9px; width: 100%; min-width: 0; }
+.cocard { border: 1px solid var(--line); border-left: 6px solid var(--accent); border-radius: 9px; padding: 14px 16px; display: grid; gap: 12px; background: var(--surface); }
+.cocard h3 { margin: 0; font-size: 18px; }
+.gridwrap { overflow-x: auto; }
+table.cov { width: auto; border-collapse: separate; border-spacing: 3px; font-size: 12px; }
+table.cov th, table.cov td { border: 0; padding: 0; text-align: center; }
+table.cov tbody th { text-align: right; padding-right: 6px; font-size: 12px; text-transform: none; letter-spacing: 0; }
+.cell { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--line); background: var(--soft); color: var(--muted); font: 600 14px inherit; font-family: inherit; cursor: pointer; padding: 0; }
+.cell.saved { background: var(--green); border-color: var(--green); color: var(--surface); }
+.cell.todo { background: color-mix(in srgb, var(--warn) 22%, var(--surface)); border-color: var(--warn); color: var(--warn); }
+.cell.bad { border-color: #a3302a; color: #a3302a; }
+.cell.none { color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted); }
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; border: 1px solid var(--line); }
+.rrow { display: grid; gap: 6px; border-top: 1px solid var(--line); padding: 10px 0; transition: background .3s; }
+.rrow.hl { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.rmain { display: grid; grid-template-columns: 44px 38px minmax(0, 1fr) auto; gap: 8px; align-items: baseline; }
+.yr { font: 600 14px "IBM Plex Mono", monospace; }
+.ty { font: 12px "IBM Plex Mono", monospace; color: var(--muted); }
+.rt { min-width: 0; overflow-wrap: anywhere; }
+.rn { display: block; font-size: 12.5px; color: var(--muted); }
+.pill { font: 600 11.5px inherit; font-family: inherit; border-radius: 999px; padding: 2px 9px; border: 1px solid var(--line); white-space: nowrap; }
+.pill.saved { background: var(--green); border-color: var(--green); color: var(--surface); }
+.pill.todo { color: var(--warn); border-color: var(--warn); }
+.pill.bad { color: #a3302a; border-color: #a3302a; }
+.pill.none { color: var(--muted); }
+.racts { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 90px; }
+@media (max-width: 560px) { .racts { padding-left: 0; } .rmain { grid-template-columns: 40px 34px minmax(0, 1fr); } .rmain .pill { grid-column: 3; justify-self: start; } }
+.filebtn { position: relative; overflow: hidden; }
+.filebtn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+details.add, details#manual { border: 1px dashed var(--line); border-radius: 9px; padding: 10px 14px; }
+details > summary { cursor: pointer; font-weight: 600; }
+details.add[open] > summary, details#manual[open] > summary { margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -80,6 +122,58 @@ textarea { min-height: 90px; resize: vertical; }
   <!-- ============ TASK 1 ============ -->
   <section class="panel" id="collect" role="tabpanel" aria-labelledby="t-collect">
     <h2>Task 1: Collect reports</h2>
+    <p class="lede">For each Fortune 500 company we want every sustainability report and every annual shareholder report from 2015 to 2025, saved as PDFs in the shared Drive folder. Pick a company, save the reports already listed, add the ones that are missing, then mark the company finished.</p>
+
+    <div class="tool" id="coTool">
+      <div class="note" id="coKeyRow" hidden><b>This page needs the project key.</b> Use the link your supervisor sent (it ends in <code>#k=…</code>), or paste the key here:
+        <div class="row" style="margin-top:8px"><input id="coKey" style="max-width:260px" aria-label="Project key"><button type="button" class="btn" id="coKeySave">Save key</button></div></div>
+      <div class="pickrow">
+        <label class="inl">Your name<input id="coName" autocomplete="name" placeholder="First Last"></label>
+        <label class="inl">Company <span id="coCounts"></span><select id="coPick" aria-label="Company"><option>Loading…</option></select></label>
+      </div>
+      <div class="row"><input id="coFilter" placeholder="Filter by name or rank" style="max-width:240px" aria-label="Filter companies">
+        <button type="button" class="btn small" id="coRefresh">Refresh</button>
+        <a class="btn small" id="coFolder" target="_blank" rel="noopener" href="#">Drive folder ↗</a>
+        <span class="status" id="coStatus" role="status"></span></div>
+
+      <div class="cocard" id="coCompany" hidden>
+        <div><h3 id="coCoName"></h3><span class="muted" id="coCoRank"></span></div>
+        <div class="row"><span id="coClaim"></span><span style="flex:1"></span>
+          <button type="button" class="btn primary small" id="coStart">Start this company</button>
+          <button type="button" class="btn small" id="coFinish">Mark finished</button>
+          <button type="button" class="btn small" id="coRelease">Give it up</button></div>
+        <p class="note" id="coNeedName" hidden>Enter your name above to start.</p>
+        <div>
+          <div class="gridwrap"><table class="cov" id="coGrid"></table></div>
+          <div class="legend"><span><i style="background:var(--green);border-color:var(--green)"></i>saved</span><span><i style="border-color:var(--warn)"></i>listed, not saved</span><span><i></i>+ missing: click to add</span><span>– no report</span><span>✗ dead link</span></div>
+        </div>
+        <div id="coRows"></div>
+        <details class="add" id="coAdd">
+          <summary>Add a missing report</summary>
+          <div class="grid2">
+            <label>Year<select id="addYear"></select></label>
+            <label>Type<select id="addType"></select></label>
+            <label>Link to the PDF<input id="addUrl" type="url" placeholder="https://…"></label>
+            <label>Page you found it on<span>optional</span><input id="addSource" type="url" placeholder="https://…"></label>
+            <label>Title<span>optional, as printed on the cover</span><input id="addTitle"></label>
+            <label>Notes<span>required for "doesn't exist": where you looked</span><input id="addNotes"></label>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button type="button" class="btn primary small" id="addBtn">Add report</button>
+            <label style="display:flex;gap:6px;align-items:center;font-weight:400"><input type="checkbox" id="addAutoSave" checked style="width:auto"> and save it to Drive</label>
+            <span style="flex:1"></span>
+            <button type="button" class="btn small" id="addNone">Doesn't exist for this year</button>
+          </div>
+        </details>
+      </div>
+
+      <div class="note"><b>How it works.</b> <b>Save to Drive</b> copies the PDF from its link straight into the Drive folder and logs it in the spreadsheet. Some company sites block this; you'll see a message saying so. Then open the link, download the PDF yourself, and use <b>Upload PDF</b>. If a link is dead, find a working copy (company site, <a href="https://www.responsibilityreports.com/" target="_blank" rel="noopener">responsibilityreports.com</a>, the <a href="https://web.archive.org/" target="_blank" rel="noopener">Wayback Machine</a>) and use Upload. If there's no copy anywhere, use <b>Mark as… → Dead link</b>. Annual reports: use the company's investor-relations site or <a href="https://www.sec.gov/edgar/search/" target="_blank" rel="noopener">SEC EDGAR</a> (10-K only when there's no separate annual report).</div>
+    </div>
+
+    <p class="note" id="coOff" hidden>The upload tool isn't connected yet. Until it is, follow the steps below by hand.</p>
+
+    <details id="manual">
+      <summary>Doing it by hand (steps, file names, document types)</summary>
     <p class="lede">The spreadsheet lists the Fortune 500 (by rank) with links to sustainability reports for 2015–2025, mostly found automatically. Many links are unchecked, some years are missing, and almost none of the annual shareholder documents are there yet. Your job is to make one company's row set complete and correct, and save the PDFs.</p>
     <div class="row"><a class="btn primary" id="sheetLink" target="_blank" rel="noopener">Open the spreadsheet ↗</a></div>
 
@@ -105,6 +199,7 @@ textarea { min-height: 90px; resize: vertical; }
     </table></div>
 
     <div class="note"><b>Spreadsheet rules.</b> One document per row. Use the year the report <i>covers</i> (a report published in 2024 on 2023 data is 2023); if you can't tell, use the publication year and say so in <code>notes</code>. Don't paste anything into empty columns to the right, and don't use commas in a cell where a new row would do. If the only copy is a mirror site (responsibilityreports.com, CSRHub), that's fine; note it.</div>
+    </details>
   </section>
 
   <!-- ============ TASK 2 ============ -->
@@ -226,5 +321,6 @@ document.getElementById("clearBtn").onclick = () => {
   form.reset(); try { localStorage.removeItem(KEY); } catch (e) {} update();
 };
 </script>
+<script src="collect.js"></script>
 </body>
 </html>
