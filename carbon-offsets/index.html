@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carbon Offsets Reporting</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root { --bg: #eef1f4; --surface: #fff; --ink: #172230; --muted: #5a6776; --line: #d3dae2; --soft: #f5f7f9; --accent: #1d4f91; --green: #1f7a5a; --warn: #a5650f; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #11161c; --surface: #1a2129; --ink: #e4e9ef; --muted: #93a0ae; --line: #2e3842; --soft: #151b22; --accent: #6fa3e8; --green: #4fc08f; --warn: #e0a54a; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #11161c; --surface: #1a2129; --ink: #e4e9ef; --muted: #93a0ae; --line: #2e3842; --soft: #151b22; --accent: #6fa3e8; --green: #4fc08f; --warn: #e0a54a; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--bg); margin: 0; }
+body { color: var(--ink); font: 15px/1.55 "IBM Plex Sans", system-ui, sans-serif; padding: 0 16px 64px; }
+a { color: var(--accent); }
+code, .mono { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 13px; }
+code { background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; overflow-wrap: anywhere; }
+.wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 16px; min-width: 0; }
+header { padding: 20px 0 14px; border-bottom: 1px solid var(--line); display: grid; gap: 4px; }
+header .back { font-size: 13px; }
+header h1 { margin: 0; font-size: 22px; }
+header p { margin: 0; color: var(--muted); max-width: 70ch; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button { font: 600 14px inherit; font-family: inherit; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--surface); background: var(--accent); border-color: var(--accent); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; min-width: 0; }
+.panel h2 { margin: 0 0 6px; font-size: 19px; }
+.panel h3 { margin: 18px 0 6px; font-size: 15px; }
+.panel p, .panel li { color: var(--ink); }
+.panel .lede { color: var(--muted); margin: 0 0 10px; }
+ol, ul { padding-left: 22px; margin: 6px 0; }
+li { margin: 4px 0; }
+.choice { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+.choice button { text-align: left; display: grid; gap: 4px; font: 14px/1.45 inherit; font-family: inherit; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--c); border-radius: 9px; padding: 12px 14px; cursor: pointer; }
+.choice button b { color: var(--ink); font-size: 15px; }
+.choice button:hover { border-color: var(--muted); border-left-color: var(--c); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.tablewrap { overflow-x: auto; }
+th, td { text-align: left; border-bottom: 1px solid var(--line); padding: 6px 8px; vertical-align: top; }
+th { font: 600 12px inherit; font-family: inherit; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.note { background: var(--soft); border: 1px solid var(--line); border-left: 4px solid var(--warn); border-radius: 8px; padding: 10px 12px; margin: 10px 0; }
+.btn { display: inline-block; font: 600 14px inherit; font-family: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 7px 12px; cursor: pointer; text-decoration: none; }
+.btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+.btn:hover { border-color: var(--muted); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.terms { display: flex; flex-wrap: wrap; gap: 6px; }
+.terms code { font-size: 12.5px; }
+form { display: grid; gap: 12px; }
+label { display: grid; gap: 4px; font-weight: 600; font-size: 14px; }
+label span { font-weight: 400; color: var(--muted); font-size: 13px; }
+input, textarea { font: 14px inherit; font-family: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 7px; padding: 7px 9px; width: 100%; min-width: 0; }
+textarea { min-height: 90px; resize: vertical; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.count { font: 13px "IBM Plex Mono", monospace; color: var(--muted); }
+.count.ok { color: var(--green); }
+.status { font: 13px "IBM Plex Mono", monospace; color: var(--muted); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="back" href="../">← Lab tools</a>
+    <h1>Carbon offsets in corporate reporting</h1>
+    <p>We are tracing how large U.S. companies talk about carbon offsets (credits, removals, renewable energy certificates, "carbon neutral" claims) in their sustainability reports and shareholder documents, and how that language changed over the last decade. Pick one of two tasks.</p>
+  </header>
+
+  <div class="choice" id="pick">
+    <button type="button" style="--c: var(--accent)" data-go="collect"><b>1. Collect reports</b>Find, check and download a company's sustainability reports and annual shareholder documents, logging each one in the shared spreadsheet.</button>
+    <button type="button" style="--c: var(--green)" data-go="summary"><b>2. Write a summary</b>Read one company's reports across years and write a short summary of how its reporting on carbon offsets changed.</button>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" id="t-collect" aria-controls="collect" aria-selected="true">1 · Collect reports</button>
+    <button type="button" role="tab" id="t-summary" aria-controls="summary" aria-selected="false">2 · Write a summary</button>
+  </div>
+
+  <!-- ============ TASK 1 ============ -->
+  <section class="panel" id="collect" role="tabpanel" aria-labelledby="t-collect">
+    <h2>Task 1: Collect reports</h2>
+    <p class="lede">The spreadsheet lists the Fortune 500 (by rank) with links to sustainability reports for 2015–2025, mostly found automatically. Many links are unchecked, some years are missing, and almost none of the annual shareholder documents are there yet. Your job is to make one company's row set complete and correct, and save the PDFs.</p>
+    <div class="row"><a class="btn primary" id="sheetLink" target="_blank" rel="noopener">Open the spreadsheet ↗</a></div>
+
+    <h3>Steps</h3>
+    <ol>
+      <li><b>Claim a company.</b> Find a company where the <code>coder</code> column is blank on all its rows. Type your name in <code>coder</code> on every row for that company. Work down the list in rank order unless you've been given a specific company.</li>
+      <li><b>Check every link that's already there.</b> Open each <code>url</code>. Confirm it opens the right company's report for the year in <code>report_year</code>. If the link is dead or wrong, find the correct one (start from <code>source_page_url</code>) and replace it. Write what you did in <code>notes</code> (e.g. <i>link checked</i>, <i>replaced dead link</i>, <i>year corrected from 2021 to 2022</i>).</li>
+      <li><b>Fill missing sustainability-report years, 2015–2025.</b> Look on the company's sustainability or investor-relations site, then <a href="https://www.responsibilityreports.com/" target="_blank" rel="noopener">responsibilityreports.com</a>, then the <a href="https://web.archive.org/" target="_blank" rel="noopener">Wayback Machine</a>. Add a new row for each report you find. If a year doesn't exist, add one row with the year, a blank <code>url</code> and a note saying where you looked.</li>
+      <li><b>Add the annual shareholder documents, 2015–2025.</b> For each year add a row for the <b>annual report to shareholders</b> (the glossy report with the CEO letter; if the company only files a 10-K "wrap", use that). Find these on the investor-relations site under "Annual reports" or "SEC filings", or on <a href="https://www.sec.gov/edgar/search/" target="_blank" rel="noopener">SEC EDGAR</a> (the 10-K). Put the document type at the start of <code>report_title</code>, as in the table below.</li>
+      <li><b>Download each PDF</b> and save it to the shared folder <span id="folderText">your supervisor gave you</span>, named <code>RANK_Company_YEAR_TYPE.pdf</code>, e.g. <code>001_Amazon_2023_SR.pdf</code> or <code>021_Chevron_2019_AR.pdf</code>. Rank is three digits, the company name has no spaces.</li>
+      <li><b>Finish the company.</b> When every year has a row for each document type, add <code>done</code> after your name in <code>coder</code> on the first row (e.g. <i>Maya – done</i>) and claim the next company.</li>
+    </ol>
+
+    <h3>Document types</h3>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Code</th><th>Start <code>report_title</code> with</th><th>What counts</th></tr></thead>
+      <tbody>
+        <tr><td><code>SR</code></td><td>Sustainability:</td><td>Sustainability, ESG, corporate (social) responsibility, impact, or climate/TCFD report. If a year has both a full ESG report and a separate climate report, add a row for each and name the second <code>…_SR2.pdf</code>.</td></tr>
+        <tr><td><code>AR</code></td><td>Annual report:</td><td>Annual report to shareholders with the CEO or chair letter.</td></tr>
+        <tr><td><code>10K</code></td><td>10-K:</td><td>The SEC Form 10-K, only when the company has no separate glossy annual report that year.</td></tr>
+        <tr><td><code>CDP</code></td><td>CDP response:</td><td>The company's public CDP climate questionnaire response, if it posts one. Optional, but useful.</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="note"><b>Spreadsheet rules.</b> One document per row. Use the year the report <i>covers</i> (a report published in 2024 on 2023 data is 2023); if you can't tell, use the publication year and say so in <code>notes</code>. Don't paste anything into empty columns to the right, and don't use commas in a cell where a new row would do. If the only copy is a mirror site (responsibilityreports.com, CSRHub), that's fine; note it.</div>
+  </section>
+
+  <!-- ============ TASK 2 ============ -->
+  <section class="panel" id="summary" role="tabpanel" aria-labelledby="t-summary" hidden>
+    <h2>Task 2: Write a summary</h2>
+    <p class="lede">Choose one company with at least five years of reports in the spreadsheet. Read how it discusses carbon offsets in its earliest, middle and latest reports, and write a short summary (about 400–600 words) of what changed.</p>
+    <div class="row"><a class="btn" id="sheetLink2" target="_blank" rel="noopener">Open the spreadsheet ↗</a></div>
+
+    <h3>How to read the reports</h3>
+    <ol>
+      <li>Claim the company: type <i>your name – summary</i> in the <code>coder</code> column of its first row, so no one else picks it.</li>
+      <li>Read at least three reports spread across time (e.g. 2016, 2020, 2024). Search each PDF (<kbd>Ctrl/⌘ F</kbd>) for:
+        <div class="terms" style="margin-top:6px">
+          <code>offset</code><code>carbon credit</code><code>carbon neutral</code><code>net zero</code><code>net-zero</code><code>removal</code><code>REC</code><code>renewable energy certificate</code><code>compensat</code><code>avoided emissions</code><code>nature-based</code><code>Verra</code><code>Gold Standard</code><code>SBTi</code><code>insetting</code><code>beyond value chain</code>
+        </div>
+      </li>
+      <li>For each report, note the page numbers where offsets come up. Every claim in your summary needs a year and page.</li>
+    </ol>
+
+    <h3>What to look for</h3>
+    <ul>
+      <li><b>Presence:</b> When do offsets first appear? Do they ever disappear?</li>
+      <li><b>Role in targets:</b> Are offsets counted toward a carbon-neutral or net-zero goal, or reported separately ("beyond value chain")? Did that change?</li>
+      <li><b>Type:</b> Avoidance credits (e.g. forest protection, cookstoves) vs removals (reforestation, direct air capture); RECs used to claim zero Scope 2 emissions.</li>
+      <li><b>Quantity:</b> Tonnes retired or purchased, or money spent, if reported.</li>
+      <li><b>Quality claims:</b> Named standards or registries (Verra, Gold Standard, ICVCM), named projects, third-party verification.</li>
+      <li><b>Tone:</b> Promotional, defensive, hedged? Do later reports mention criticism, retire a claim, or shift to "contributions"?</li>
+    </ul>
+
+    <h3>Draft your summary</h3>
+    <p class="lede">Fill in the form. Your draft saves in this browser as you type. When you're done, download it and save it to the shared folder <span class="folderText2">your supervisor gave you</span> as <code>RANK_Company_offsets_summary.md</code>.</p>
+    <form id="sumForm" autocomplete="off">
+      <div class="grid2">
+        <label>Your name<input name="name" required></label>
+        <label>Company<input name="company" required></label>
+        <label>Fortune rank<span>From the spreadsheet</span><input name="rank" inputmode="numeric"></label>
+        <label>Reports read<span>Years, e.g. 2016, 2019, 2022, 2024</span><input name="years" required></label>
+      </div>
+      <label>Bottom line<span>One or two sentences: how did this company's reporting on offsets change?</span><textarea name="bottom" required></textarea></label>
+      <label>Early reports<span>What did the earliest reports say about offsets, if anything? Cite year and page.</span><textarea name="early"></textarea></label>
+      <label>Later reports<span>What do the latest reports say? Cite year and page.</span><textarea name="late"></textarea></label>
+      <label>Key changes<span>Role in targets, type, quantity, quality claims, tone. Note the year each shift appears.</span><textarea name="changes" style="min-height:140px"></textarea></label>
+      <label>Notable quotes<span>Up to three short quotes (one sentence each), with year and page.</span><textarea name="quotes"></textarea></label>
+      <label>Gaps and questions<span>Missing years, unclear language, anything we should look at more closely.</span><textarea name="gaps"></textarea></label>
+      <div class="row">
+        <span class="count" id="wc">0 words</span>
+        <span style="flex:1"></span>
+        <span class="status" id="status"></span>
+        <button type="button" class="btn" id="copyBtn">Copy text</button>
+        <button type="submit" class="btn primary">Download .md</button>
+        <button type="button" class="btn" id="clearBtn">Clear</button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<script>
+// Edit these two links.
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1tDPb3kNYCcG8bWD3AJLbAfaskNeWvrVv6enJWyma7i0/edit?gid=1358907780#gid=1358907780";
+const FOLDER_URL = ""; // shared Google Drive folder for PDFs and summaries; leave "" to say "your supervisor gave you"
+
+document.getElementById("sheetLink").href = SHEET_URL;
+document.getElementById("sheetLink2").href = SHEET_URL;
+if (FOLDER_URL) {
+  const link = () => { const a = document.createElement("a"); a.href = FOLDER_URL; a.target = "_blank"; a.rel = "noopener"; a.textContent = "(open folder ↗)"; return a; };
+  document.getElementById("folderText").replaceChildren(link());
+  document.querySelector(".folderText2").replaceChildren(link());
+}
+
+// tabs
+const tabs = { collect: document.getElementById("t-collect"), summary: document.getElementById("t-summary") };
+function show(id, scroll) {
+  for (const k in tabs) { tabs[k].setAttribute("aria-selected", k === id); document.getElementById(k).hidden = k !== id; }
+  try { history.replaceState(null, "", "#" + id); } catch (e) {}
+  if (scroll) document.getElementById(id).scrollIntoView({ behavior: "smooth", block: "start" });
+}
+tabs.collect.onclick = () => show("collect");
+tabs.summary.onclick = () => show("summary");
+document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => show(b.dataset.go, true));
+if (location.hash === "#summary") show("summary");
+
+// summary builder
+const form = document.getElementById("sumForm"), KEY = "co-summary-draft";
+const F = n => form.elements[n].value.trim();
+try { const d = JSON.parse(localStorage.getItem(KEY) || "{}"); for (const k in d) if (form.elements[k]) form.elements[k].value = d[k]; } catch (e) {}
+
+function markdown() {
+  const sec = (h, v) => v ? `\n## ${h}\n\n${v}\n` : "";
+  return `# ${F("company") || "Company"}: carbon offsets in reporting\n\n` +
+    `- Coder: ${F("name")}\n- Fortune rank: ${F("rank")}\n- Reports read: ${F("years")}\n- Written: ${new Date().toISOString().slice(0, 10)}\n` +
+    sec("Bottom line", F("bottom")) + sec("Early reports", F("early")) + sec("Later reports", F("late")) +
+    sec("Key changes", F("changes")) + sec("Notable quotes", F("quotes")) + sec("Gaps and questions", F("gaps"));
+}
+function update() {
+  const words = ["bottom", "early", "late", "changes", "quotes", "gaps"].map(F).join(" ").split(/\s+/).filter(Boolean).length;
+  const wc = document.getElementById("wc");
+  wc.textContent = words + " words" + (words < 400 ? " (aim for 400–600)" : words > 600 ? " (a bit long; aim for 400–600)" : "");
+  wc.className = "count" + (words >= 400 && words <= 600 ? " ok" : "");
+  const d = {}; for (const el of form.elements) if (el.name) d[el.name] = el.value;
+  try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {}
+}
+form.addEventListener("input", update); update();
+const status = t => { const s = document.getElementById("status"); s.textContent = t; setTimeout(() => s.textContent = "", 2500); };
+
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  const rank = F("rank") ? String(parseInt(F("rank"), 10) || F("rank")).padStart(3, "0") + "_" : "";
+  const name = rank + (F("company").replace(/[^A-Za-z0-9]+/g, "") || "Company") + "_offsets_summary.md";
+  const url = URL.createObjectURL(new Blob([markdown()], { type: "text/markdown" }));
+  const a = document.createElement("a"); a.href = url; a.download = name; document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  status("Downloaded " + name);
+});
+document.getElementById("copyBtn").onclick = async () => {
+  try { await navigator.clipboard.writeText(markdown()); status("Copied"); } catch (e) { status("Copy failed; use Download"); }
+};
+document.getElementById("clearBtn").onclick = () => {
+  if (!confirm("Clear your draft? This can't be undone.")) return;
+  form.reset(); try { localStorage.removeItem(KEY); } catch (e) {} update();
+};
+</script>
+</body>
+</html>
