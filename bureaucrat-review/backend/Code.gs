@@ -18,7 +18,7 @@ function doPost(e) {
 }
 
 function handle_(p) {
-  var key = PropertiesService.getScriptProperties().getProperty('KEY');
+  var key = String(PropertiesService.getScriptProperties().getProperty('KEY') || '').trim();
   if (!key || p.k !== key) return out_({ ok: false, error: 'Wrong or missing project key' });
   try {
     if (p.action === 'state') return out_({ ok: true, claims: readClaims_() });
