@@ -164,12 +164,12 @@ textarea { min-height: 90px; resize: vertical; }
 <script>
 // Edit these two links.
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/1tDPb3kNYCcG8bWD3AJLbAfaskNeWvrVv6enJWyma7i0/edit?gid=1358907780#gid=1358907780";
-const FOLDER_URL = ""; // shared Google Drive folder for PDFs and summaries; leave "" to say "your supervisor gave you"
+const FOLDER_URL = "https://drive.google.com/drive/folders/1lRdNsCN7rhbA_asyXh4OQ0HI84tg3MJV?usp=sharing"; // shared Google Drive folder for PDFs and summaries; leave "" to say "your supervisor gave you"
 
 document.getElementById("sheetLink").href = SHEET_URL;
 document.getElementById("sheetLink2").href = SHEET_URL;
 if (FOLDER_URL) {
-  const link = () => { const a = document.createElement("a"); a.href = FOLDER_URL; a.target = "_blank"; a.rel = "noopener"; a.textContent = "(open folder ↗)"; return a; };
+  const link = () => { const a = document.createElement("a"); a.href = FOLDER_URL; a.target = "_blank"; a.rel = "noopener"; a.textContent = "on Google Drive ↗"; return a; };
   document.getElementById("folderText").replaceChildren(link());
   document.querySelector(".folderText2").replaceChildren(link());
 }
