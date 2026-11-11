@@ -1,11 +1,21 @@
 /**
+ * @OnlyCurrentDoc
+ *
  * Google Apps Script backend for the carbon-offsets report collector.
  * Bind it to the report spreadsheet (Extensions → Apps Script) and deploy as a web app
  * (Execute as: Me, Who has access: Anyone). Setup steps: carbon-offsets/README.md.
  *
+ * Permissions are kept narrow (see appsscript.json):
+ *   spreadsheets.currentonly  only the spreadsheet this script is attached to
+ *   drive.file                only Drive files and folders this script created
+ *   script.external_request   to download report PDFs and call the Drive API
+ * Because of drive.file the script can't write into a folder you made. Run setup() once from the
+ * editor: it creates "Carbon offsets PDFs" in your My Drive. Drag that folder into the shared folder;
+ * the script keeps access after the move.
+ *
  * Script properties:
  *   KEY        required. Students get it in their link (…/carbon-offsets/#k=KEY).
- *   FOLDER_ID  optional. Drive folder for PDFs (default below).
+ *   FOLDER_ID  set by setup(): the script-created PDF folder.
  *   SHEET_GID  optional. Tab holding the report list (default below).
  *
  * The report tab keeps its own columns (rank, company, report_year, report_title, url,
@@ -15,7 +25,7 @@
  * It also keeps a `companies` tab: company | rank | coder | claimed_at | done_at.
  */
 
-var DEFAULT_FOLDER_ID = '1lRdNsCN7rhbA_asyXh4OQ0HI84tg3MJV';
+var FOLDER_NAME = 'Carbon offsets PDFs';
 var DEFAULT_SHEET_GID = 1358907780;
 var BASE_COLS = ['rank', 'company', 'report_year', 'report_title', 'url', 'source_page_url', 'notes', 'coder'];
 var ADD_COLS = ['row_id', 'doc_type', 'status', 'drive_file', 'saved_by', 'saved_at'];
@@ -32,7 +42,7 @@ function handle_(p) {
   var key = String(PropertiesService.getScriptProperties().getProperty('KEY') || '').trim();
   if (!key || String(p.k || '').trim() !== key) return out_({ ok: false, error: 'Wrong or missing project key' });
   try {
-    if (p.action === 'companies') return out_({ ok: true, companies: companies_(), folder: folderUrl_() });
+    if (p.action === 'companies') return out_({ ok: true, companies: companies_() });
     if (p.action === 'company') return out_({ ok: true, rows: companyRows_(str_(p.company, 120)), claim: claimOf_(str_(p.company, 120)) });
     var coder = name_(p.coder);
     if (p.action === 'fetch') return out_({ ok: true, row: fetchToDrive_(Number(p.row_id), coder) });
@@ -58,8 +68,63 @@ function name_(s) { s = str_(s, 60); if (!s) throw new Error('Enter your name fi
 function pad3_(n) { n = String(parseInt(n, 10) || 0); return ('000' + n).slice(-3); }
 function slug_(s) { return String(s).replace(/&/g, 'and').replace(/[^A-Za-z0-9]+/g, ''); }
 function now_() { return new Date().toISOString().replace('T', ' ').slice(0, 16); }
-function folderId_() { return PropertiesService.getScriptProperties().getProperty('FOLDER_ID') || DEFAULT_FOLDER_ID; }
-function folderUrl_() { return 'https://drive.google.com/drive/folders/' + folderId_(); }
+function folderUrl_() { var id = PropertiesService.getScriptProperties().getProperty('FOLDER_ID'); return id ? 'https://drive.google.com/drive/folders/' + id : ''; }
+
+/* ---------- Drive (REST API v3 with the drive.file scope) ---------- */
+
+var FOLDER_MIME = 'application/vnd.google-apps.folder';
+
+function drive_(method, url, opts) {
+  opts = opts || {};
+  var res = UrlFetchApp.fetch(url, {
+    method: method, muteHttpExceptions: true,
+    headers: Object.assign({ Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, opts.headers || {}),
+    contentType: opts.contentType, payload: opts.payload
+  });
+  var code = res.getResponseCode();
+  if (code < 200 || code >= 300) throw new Error('Drive error ' + code + ': ' + res.getContentText().slice(0, 200));
+  return res;
+}
+function q_(s) { return String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+function findInFolder_(parent, name, mime) {
+  var q = "name = '" + q_(name) + "' and '" + parent + "' in parents and trashed = false" + (mime ? " and mimeType = '" + mime + "'" : '');
+  var url = 'https://www.googleapis.com/drive/v3/files?supportsAllDrives=true&includeItemsFromAllDrives=true&fields=files(id)&q=' + encodeURIComponent(q);
+  var files = JSON.parse(drive_('get', url).getContentText()).files || [];
+  return files.length ? files[0].id : '';
+}
+function createFolder_(name, parent) {
+  var meta = { name: name, mimeType: FOLDER_MIME };
+  if (parent) meta.parents = [parent];
+  var res = drive_('post', 'https://www.googleapis.com/drive/v3/files?supportsAllDrives=true&fields=id',
+    { contentType: 'application/json', payload: JSON.stringify(meta) });
+  return JSON.parse(res.getContentText()).id;
+}
+// Root PDF folder: created by this script so drive.file covers it.
+function rootFolder_() {
+  var props = PropertiesService.getScriptProperties(), id = props.getProperty('FOLDER_ID');
+  if (id) return id;
+  id = createFolder_(FOLDER_NAME, '');
+  props.setProperty('FOLDER_ID', id);
+  return id;
+}
+function uploadPdf_(parent, name, bytes) {
+  var start = drive_('post', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&supportsAllDrives=true', {
+    contentType: 'application/json; charset=UTF-8', headers: { 'X-Upload-Content-Type': 'application/pdf' },
+    payload: JSON.stringify({ name: name, parents: [parent], mimeType: 'application/pdf' })
+  });
+  var h = start.getAllHeaders(), loc = h.Location || h.location;
+  if (!loc) throw new Error('Drive did not start the upload');
+  var res = drive_('put', loc, { contentType: 'application/pdf', payload: bytes });
+  return 'https://drive.google.com/file/d/' + JSON.parse(res.getContentText()).id + '/view';
+}
+
+/** Run once from the editor (select setup, click Run). Logs the folder link to move into the shared folder. */
+function setup() {
+  var url = 'https://drive.google.com/drive/folders/' + rootFolder_();
+  reportSheet_();
+  Logger.log('PDF folder: ' + url + '\nDrag it into the shared carbon-offsets folder. The script keeps access after the move.');
+  return url;
+}
 
 function reportSheet_() {
   var gid = Number(PropertiesService.getScriptProperties().getProperty('SHEET_GID') || DEFAULT_SHEET_GID);
@@ -219,18 +284,18 @@ function mark_(id, status, note, coder) {
 
 function saveBlob_(id, coder, blob) {
   var t = table_(), r = rowObj_(t.values[findRow_(t, id)], t.col);
-  var root = DriveApp.getFolderById(folderId_());
-  var base = pad3_(r.rank) + '_' + slug_(r.company);
-  var sub = root.getFoldersByName(base);
-  var folder = sub.hasNext() ? sub.next() : root.createFolder(base);
+  var base = pad3_(r.rank) + '_' + slug_(r.company), lock = LockService.getScriptLock(), folder;
+  lock.waitLock(30000);
+  try { folder = findInFolder_(rootFolder_(), base, FOLDER_MIME) || createFolder_(base, rootFolder_()); }
+  finally { lock.releaseLock(); }
+  // one student per company, so a second file with the same year and type is rare; it gets _2, _3…
   var stem = base + '_' + (r.year || 'undated') + '_' + r.type, name = stem + '.pdf', k = 2;
-  while (folder.getFilesByName(name).hasNext()) { name = stem + '_' + k + '.pdf'; k += 1; }
-  var file = folder.createFile(blob.setName(name));
-  var lock = LockService.getScriptLock();
+  while (findInFolder_(folder, name)) { name = stem + '_' + k + '.pdf'; k += 1; }
+  var link = uploadPdf_(folder, name, blob.getBytes());
   lock.waitLock(30000);
   try {
     t = table_();
-    return setCells_(t, findRow_(t, id), { status: 'saved', drive_file: file.getUrl(), doc_type: r.type, saved_by: coder, saved_at: now_() });
+    return setCells_(t, findRow_(t, id), { status: 'saved', drive_file: link, doc_type: r.type, saved_by: coder, saved_at: now_() });
   } finally { lock.releaseLock(); }
 }
 

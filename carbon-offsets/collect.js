@@ -51,7 +51,6 @@
     const res = await call("companies");
     if (!res.ok) return flash(res.error, true);
     S.companies = res.companies;
-    if (res.folder) $("coFolder").href = res.folder;
     renderPicker(); flash("");
   }
 
