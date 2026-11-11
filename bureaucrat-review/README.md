@@ -12,7 +12,7 @@ RAs review two kinds of coding, one case at a time.
 | **Page completeness** | 120 pages (G001–G120), 20 per era | A whole scanned page beside every row the pipeline placed on it. Mark each row real / fragment / merged / garbage / not on this page, add listings the pipeline missed, and count the listings printed |
 | **Linking across issues** | 350 pairs (L001–L350) | Two listings from different issues: same project, different, or can't tell. 250 pairs the pipeline linked (stratified by `project_id_method`: pid 40, pid_backfill 60, title_cluster 60 tabular + 60 paragraph, split 30) and 100 near-misses it did not link (same country, ≤12 months apart, title Jaccard ≥ 0.5). RAs are not told which is which |
 
-Eras: 1955–69, 1970–87, 1988–96/09 (worst scans), 1996/10–2003, 2004–13, 2014–20. Hand-coded issues are excluded (they are the authoritative transcriptions). Built by `~/claude/bureaucrats/review_site_build/build_mos_tasks.py` (seed 20261110), which finds each row on its PDF page by word overlap, boxes it with PyMuPDF and renders the page to `pages/*.jpg` (130 dpi; public World Bank documents, not encrypted).
+Eras: 1955–69, 1970–87, 1988–96/09 (worst scans), 1996/10–2003, 2004–13, 2014–20. Hand-coded issues are excluded (they are the authoritative transcriptions). Built by `~/claude/bureaucrats/review_site_build/build_mos_tasks.py` (seed 20261110), which finds each row on its PDF page by word overlap, boxes it with PyMuPDF and renders the page, plus the pages before and after it, to `pages/*.jpg` (130 dpi; public World Bank documents, not encrypted). RAs can step to the previous or next page (buttons above the scan, or `[` and `]`) when an entry runs across a page break; the boxes show only on the entry's own page.
 
 **Bureaucrat careers**:
 

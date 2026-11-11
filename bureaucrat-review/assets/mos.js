@@ -8,9 +8,13 @@ const tail = (b, c, task) => [Math.round(b.secs), needs(task, c.id) === 2 ? 1 : 
 const TAILC = ["case_note", "seconds_spent", "double_coded", "codebook_version", "data_version", "saved_at"];
 
 function pageViewer(c, boxes) {
-  return `<div class="pv" id="pv"><div class="pvbar"><span>issue ${esc(c.issue)} · page ${esc(c.page)} of ${esc(c.n_pages)}</span><span class="sp"></span>
+  return `<div class="pv" id="pv" data-img="${esc(c.img)}" data-page="${esc(c.page)}" data-n="${esc(c.n_pages || "")}"><div class="pvbar">
+    <button class="btn small" type="button" data-pg="-1" title="Previous page of this issue ( [ )">‹ Prev page</button>
+    <span id="pvlab">issue ${esc(c.issue)} · page ${esc(c.page)} of ${esc(c.n_pages)}</span>
+    <button class="btn small" type="button" data-pg="1" title="Next page of this issue ( ] )">Next page ›</button>
+    <button class="btn small primary" type="button" id="pvback" hidden>Back to page ${esc(c.page)}</button><span class="sp"></span>
     <button class="btn small" type="button" data-z="1">Fit</button><button class="btn small" type="button" data-z="1.6">160%</button><button class="btn small" type="button" data-z="2.4">240%</button>
-    <a href="${esc(c.img)}" target="_blank" rel="noopener">Open ↗</a></div>
+    <a href="${esc(c.img)}" target="_blank" rel="noopener" id="pvopen">Open ↗</a></div>
     <div class="pvscroll" id="pvscroll"><div class="pvinner" id="pvinner"><img src="${esc(c.img)}" alt="Scanned MOS page ${esc(c.page)}" id="pvimg">
     ${boxes.map(b => `<div class="box${b.cls ? " " + b.cls : ""}" data-g="${esc(b.g ?? "")}" style="left:${b.r[0] * 100}%;top:${b.r[1] * 100}%;width:${b.r[2] * 100}%;height:${b.r[3] * 100}%">${b.label ? `<b>${esc(b.label)}</b>` : ""}</div>`).join("")}
     </div></div></div>`;
@@ -22,7 +26,45 @@ function wireViewer(g) {
   $("pv").querySelectorAll("[data-z]").forEach(b => b.onclick = () => { z = +b.dataset.z; store.set("zoom", z); apply(); focusBox(cur.g ?? g); });
   const img = $("pvimg");
   if (img.complete) focusBox(g); else img.onload = () => focusBox(cur.g ?? g);
+  wirePager();
 }
+// Previous / next page of the same issue, for entries that run across a page break.
+// Neighbour images sit beside the entry's page as <hash>_p<N>.jpg; boxes only belong to the entry's own page.
+function wirePager() {
+  const pv = $("pv"), img = $("pvimg"), base = +pv.dataset.page, n = +pv.dataset.n || Infinity, src0 = pv.dataset.img;
+  const lab0 = $("pvlab").textContent;
+  let off = 0, missing = new Set();
+  const srcFor = q => src0.replace(/_p\d+\.jpg$/, `_p${q}.jpg`);
+  const btn = d => pv.querySelector(`[data-pg="${d}"]`);
+  function sync() {
+    const q = base + off;
+    btn(-1).disabled = q <= 1 || missing.has(q - 1);
+    btn(1).disabled = q >= n || missing.has(q + 1);
+    $("pvback").hidden = off === 0;
+    $("pvinner").classList.toggle("nbr", off !== 0);
+    $("pvlab").textContent = off === 0 ? lab0 : `page ${q} of ${n === Infinity ? "?" : n} · entry is on page ${base}`;
+    $("pvopen").href = srcFor(q);
+  }
+  function go(o) {
+    const q = base + o; if (q < 1 || q > n || missing.has(q)) return;
+    const prev = off; off = o;
+    img.onload = () => {
+      const sc = $("pvscroll");
+      if (off === 0) focusBox(cur.g); else sc.scrollTo({ top: o < prev ? sc.scrollHeight : 0, left: 0 });
+    };
+    img.onerror = () => { missing.add(q); off = prev; img.onerror = null; img.src = srcFor(base + off); sync(); };
+    img.alt = `Scanned MOS page ${q}`; img.src = srcFor(q); sync();
+  }
+  pv.querySelectorAll("[data-pg]").forEach(b => b.onclick = () => go(off + +b.dataset.pg));
+  $("pvback").onclick = () => go(0);
+  pv.pager = go; pv.pagerOff = () => off;
+  sync();
+}
+document.addEventListener("keydown", e => {
+  const pv = $("pv");
+  if (!pv || !pv.pager || (e.key !== "[" && e.key !== "]") || (e.target.closest && e.target.closest("input,textarea,select,[contenteditable]"))) return;
+  e.preventDefault(); pv.pager(pv.pagerOff() + (e.key === "]" ? 1 : -1));
+});
 function focusBox(g) {
   const sc = $("pvscroll"); if (!sc) return;
   const all = [...sc.querySelectorAll(".box")], keyed = g != null && g !== "";
